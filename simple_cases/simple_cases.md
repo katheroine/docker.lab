@@ -32,3 +32,17 @@ exit
 ```
 
 ![Created container in Docker Desktop after exit shell](docker_run_i_t_ubuntu_-_containers_-_after_exit.png "Created container in Docker Desktop after exit shell")
+
+## Starting created containers
+
+`docker start exciting_mcnulty`
+
+* `start` - starting previously created container
+* `exciting_mcnulty` - name od the particular container
+
+```bash
+$ docker start exciting_mcnulty
+exciting_mcnulty
+```
+
+![Started container in Docker Desktop](docker_start_container_-_containers.png "Started container in Docker Desktop")
