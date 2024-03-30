@@ -1,6 +1,6 @@
 # Simple cases
 
-## Running containers
+## Creating containers
 
 `docker run -i -t ubuntu /bin/bash`
 
@@ -21,8 +21,14 @@ root@bcdbfe3ec6c4:/# ls
 bin  boot  dev  etc  home  lib  lib32  lib64  libx32  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
 root@bcdbfe3ec6c4:/# cat /etc/issue
 Ubuntu 22.04.4 LTS \n \l
-
 ```
 
 ![Created container in Docker Desktop](docker_run_i_t_ubuntu_-_containers.png "Created container in Docker Desktop")
 ![Created image in Docker Desktop](docker_run_i_t_ubuntu_-_images.png "Created image in Docker Desktop")
+
+```bash
+root@bcdbfe3ec6c4:/# exit
+exit
+```
+
+![Created container in Docker Desktop after exit shell](docker_run_i_t_ubuntu_-_containers_-_after_exit.png "Created container in Docker Desktop after exit shell")
