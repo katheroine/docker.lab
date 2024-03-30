@@ -47,6 +47,20 @@ exciting_mcnulty
 
 ![Started container in Docker Desktop](docker_start_container_-_containers.png "Started container in Docker Desktop")
 
+`docker start -i exciting_mcnulty`
+
+* `-i` - interactively
+
+```bash
+$ docker start -i exciting_mcnulty
+root@bcdbfe3ec6c4:/# pwd
+/
+root@bcdbfe3ec6c4:/# ls
+bin  boot  dev  etc  home  lib  lib32  lib64  libx32  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@bcdbfe3ec6c4:/# exit
+exit
+```
+
 ## Stopping containers
 
 `docker stop exciting_mcnulty`
