@@ -186,3 +186,30 @@ Status: Downloaded newer image for docker/getting-started:latest
 ![Created container with port mapping in Docker Desktop](docker_run_d_p_8080_80_-_containers.png "Created container with port mapping in Docker Desktop")
 ![Created image in Docker Desktop](docker_run_d_p_8080_80_-_images.png "Created image in Docker Desktop")
 ![Port mapping result in internet browser](docker_run_d_p_8080_80_-_browser.png "Port mapping result in internet browser")
+
+## Listing containers
+
+`docker ps`
+
+* `ps` - listing containers
+
+```bash
+$ docker ps
+CONTAINER ID   IMAGE                    COMMAND                  CREATED          STATUS          PORTS                  NAMES
+708ca9a129d4   docker/getting-started   "/docker-entrypoint.…"   36 minutes ago   Up 36 minutes   0.0.0.0:8080->80/tcp   upbeat_engelbart
+```
+
+`docker ps -a`
+
+* `ps` - listing containers
+* `-a` - all (also not running)
+
+```bash
+$ docker ps -a
+CONTAINER ID   IMAGE                      COMMAND                  CREATED          STATUS                    PORTS                  NAMES
+708ca9a129d4   docker/getting-started     "/docker-entrypoint.…"   37 minutes ago   Up 37 minutes             0.0.0.0:8080->80/tcp   upbeat_engelbart
+472d1a966432   docker/welcome-to-docker   "/docker-entrypoint.…"   2 hours ago      Exited (0) 2 hours ago                           angry_merkle
+bcdbfe3ec6c4   ubuntu                     "/bin/bash"              2 weeks ago      Exited (0) 23 hours ago                          exciting_mcnulty
+```
+
+![Containers list in Docker Desktop](containers_list.png "Containers list in Docker Desktop")
