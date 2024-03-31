@@ -157,3 +157,32 @@ Status: Downloaded newer image for docker/welcome-to-docker:latest
 2024/03/30 20:48:23 [notice] 1#1: worker process 33 exited with code 0
 2024/03/30 20:48:23 [notice] 1#1: exit
 ```
+
+`docker run -d -p 8080:80 docker/getting-started`
+
+* `run` - running new container
+* `-d` - detached mode (running in the background)
+* `-p 8080:80` - mapping port 8088 on the Docker host to TCP port 80 in the container
+* `docker/getting-started` - a particular container to download from the Docker Hub to the registry
+
+```bash
+$ docker run -d -p 8080:80 docker/getting-started
+Unable to find image 'docker/getting-started:latest' locally
+latest: Pulling from docker/getting-started
+c158987b0551: Pull complete
+1e35f6679fab: Pull complete
+cb9626c74200: Pull complete
+b6334b6ace34: Pull complete
+f1d1c9928c82: Pull complete
+9b6f639ec6ea: Pull complete
+ee68d3549ec8: Pull complete
+33e0cbbb4673: Pull complete
+4f7e34c2de10: Pull complete
+Digest: sha256:d79336f4812b6547a53e735480dde67f8f8f7071b414fbd9297609ffb989abc1
+Status: Downloaded newer image for docker/getting-started:latest
+86f7b7b6ad16a59486b9fb623597774a54d2d9fa35f86fed640a82fbb3cf37ce
+```
+
+![Created container with port mapping in Docker Desktop](docker_run_d_p_8080_80_-_containers.png "Created container with port mapping in Docker Desktop")
+![Created image in Docker Desktop](docker_run_d_p_8080_80_-_images.png "Created image in Docker Desktop")
+![Port mapping result in internet browser](docker_run_d_p_8080_80_-_browser.png "Port mapping result in internet browser")
