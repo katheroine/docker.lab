@@ -213,3 +213,31 @@ bcdbfe3ec6c4   ubuntu                     "/bin/bash"              2 weeks ago  
 ```
 
 ![Containers list in Docker Desktop](containers_list.png "Containers list in Docker Desktop")
+
+## Listing images
+
+`docker images`
+
+* `images` - list all downloaded images
+
+```bash
+$ docker image ls
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+ubuntu                     latest    ca2b0f26964c   4 weeks ago     77.9MB
+docker/welcome-to-docker   latest    c1f619b6477e   4 months ago    18.6MB
+docker/getting-started     latest    3e4394f6b72f   15 months ago   47MB
+```
+
+`docker image ls`
+
+* `image ls` - list all downloaded images
+
+```bash
+$ docker image ls
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+ubuntu                     latest    ca2b0f26964c   4 weeks ago     77.9MB
+docker/welcome-to-docker   latest    c1f619b6477e   4 months ago    18.6MB
+docker/getting-started     latest    3e4394f6b72f   15 months ago   47MB
+```
+
+![Images list in Docker Desktop](images_list.png "Images list in Docker Desktop")
