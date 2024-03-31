@@ -1,4 +1,4 @@
-# Simple cases
+# Basics
 
 ## Creating containers
 
