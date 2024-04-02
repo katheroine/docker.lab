@@ -120,3 +120,51 @@ $ docker run -d -p 8080:80 hello-php
 ![Created container in Docker Desktop](hello-world-in-php_-_containers.png "Created container in Docker Desktop")
 
 ![Example application in browser](hello-world-in-php_-_browser.png "Example application in browser")
+
+## Tagging image
+
+`docker tag hello-php:latest katheroine/hello-php:latest`
+
+* `tag` - create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+* `hello-php:latest` - SOURCE_IMAGE
+* `katheroine/hello-php:latest` - TARGET_IMAGE
+
+```bash
+$ docker tag hello-php:latest katheroine/hello-php:latest
+```
+
+![Tagged image in Docker Desktop](hello-world-in-php_-_tagged_image.png "Tagged image in Docker Desktop")
+
+## Publishing image
+
+`docker push katheroine/hello-php:latest`
+
+* `push` - upload an image to a registry (Docker Hub)
+* `katheroine/hello-php:latest` - tagged image
+
+**It requires being logged in to the registry**
+
+```bash
+$ docker push katheroine/hello-php:latest
+The push refers to repository [docker.io/katheroine/hello-php]
+5f70bf18a086: Mounted from nicolaka/netshoot
+fd6834dd5b08: Pushed
+a826f541fde3: Pushed
+d6237b70079a: Pushed
+3b170ef664d9: Mounted from library/php
+4a93e3786ef5: Mounted from library/php
+68d2dfc046eb: Mounted from library/php
+0c61f43e6df2: Mounted from library/php
+7764f0fe5466: Mounted from library/php
+292c23e60187: Mounted from library/php
+3ac360b81782: Mounted from library/php
+76883a98d179: Mounted from library/php
+03d7c3cdc80f: Mounted from library/php
+e691f3ea106b: Mounted from library/php
+af92c2132539: Mounted from library/php
+20424b33f94c: Mounted from library/php
+a483da8ab3e9: Mounted from library/php
+latest: digest: sha256:df80f69f0bdae6d737551ba2df4c7390e10a7d01560e8b45e430d803321b9f7e size: 3868
+```
+
+![Published image on Docker Hub](hello-world-in-php_-_published_image.png "Published image on Docker Hub")
