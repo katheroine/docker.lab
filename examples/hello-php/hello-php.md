@@ -110,7 +110,7 @@ What's Next?
 * `run` - running new container
 * `-d` - detached mode (running in the background)
 * `-p 8080:80` - mapping port 8088 on the Docker host to TCP port 80 in the container
-* `hello-php` - a particular local container
+* `hello-php` - a particular local image
 
 ```bash
 $ docker run -d -p 8080:80 hello-php
