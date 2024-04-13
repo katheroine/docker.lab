@@ -25,6 +25,7 @@ COPY . /var/www/html
 
 # Set the working directory
 WORKDIR /var/www/html
+
 ```
 
 ## Creating PHP application sample

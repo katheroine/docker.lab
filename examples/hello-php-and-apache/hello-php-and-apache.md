@@ -23,9 +23,10 @@ RUN a2ensite site.conf
 EXPOSE 80
 
 CMD ["apachectl", "-D", "FOREGROUND"]
+
 ```
 
-## Creating PHP application sample
+## Preparing PHP application sample
 
 **index.php**
 
@@ -83,7 +84,7 @@ What's Next?
 
 * `run` - running new container
 * `-d` - detached mode (running in the background)
-* `-p 8080:80` - mapping port 8088 on the Docker host to TCP port 80 in the container
+* `-p 8080:80` - mapping port 8080 on the Docker host to TCP port 80 in the container
 * `--name php-apache` - container name
 * `hello-php` - a particular local image
 
