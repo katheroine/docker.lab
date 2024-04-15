@@ -1,0 +1,17 @@
+name: php-apache-mysql
+
+services:
+
+  php-apache:
+    container_name: php-apache-partial
+    build:
+      context: ./php-apache
+    ports:
+      - "8080:80"
+
+  mysql:
+    container_name: mysql-partial
+    build:
+      context: ./mysql
+    ports:
+      - "3307:3306"
