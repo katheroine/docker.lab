@@ -5,6 +5,7 @@ Laboratory of Docker.
 ## Index
 
 1. [Containerization](basics/containerization.md)
+2. [Docker](basics/docker.md)
 2. [Basics](basics/basics.md)
 3. [Examples](examples/)
     1. [Hello World in PHP on Apache from prepared image](examples/hello-php/hello-php.md)
