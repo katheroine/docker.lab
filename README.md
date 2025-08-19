@@ -6,8 +6,9 @@ Laboratory of Docker.
 
 1. [Containerization](basics/containerization.md)
 2. [Docker](basics/docker.md)
-2. [Basics](basics/basics.md)
-3. [Examples](examples/)
+3. [CLI](basics/cli.md)
+4. [Basics](basics/basics.md)
+5. [Examples](examples/)
     1. [Hello World in PHP on Apache from prepared image](examples/hello-php/hello-php.md)
     2. [Hello World in PHP on Apache from scratch](examples/hello-php-and-apache/hello-php-and-apache.md)
     3. Hello World in PHP on Apache with MySQL from scratch - two containers & network
