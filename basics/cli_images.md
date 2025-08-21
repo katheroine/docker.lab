@@ -74,7 +74,7 @@ docker COMMAND --filter "KEY=VALUE"
 
 The key represents the field that you want to filter on. The value is the pattern that the specified field must match. The operator can be either equals (`=`) or not equals (`!=`).
 
-For example, the command docker images --filter reference=alpine filters the output of the docker images command to only print alpine images.
+For example, the command `docker images --filter reference=alpine` filters the output of the docker images command to only print alpine images.
 
 -- [Docker Documentation](https://docs.docker.com/engine/cli/filter)
 
@@ -127,33 +127,6 @@ Display detailed information on one or more images.
       --platform string   Inspect a specific platform of the multi-platform image.
                           If the image or the server is not multi-platform capable, the command will error out if the platform does not match.
                           'os[/arch[/variant]]': Explicit platform (eg. linux/amd64)
-```
-
-## [Showing history of an image](https://docs.docker.com/reference/cli/docker/image/history)
-
-```
-docker image history [OPTIONS] IMAGE
-```
-
-**Aliases**
-
-```
-docker history
-```
-
-**Options**
-
-```
-      --format string     Format output using a custom template:
-                          'table':            Print output in table format with column headers (default)
-                          'table TEMPLATE':   Print output in table format using the given Go template
-                          'json':             Print in JSON format
-                          'TEMPLATE':         Print output using the given Go template.
-                          Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates
-  -H, --human             Print sizes and dates in human readable format (default true)
-      --no-trunc          Don't truncate output
-      --platform string   Show history for the given platform. Formatted as "os[/arch[/variant]]" (e.g., "linux/amd64")
-  -q, --quiet             Only show image IDs
 ```
 
 **Examples**
@@ -216,6 +189,33 @@ docker image inspect ubuntu
         }
     }
 ]
+```
+
+## [Showing history of an image](https://docs.docker.com/reference/cli/docker/image/history)
+
+```
+docker image history [OPTIONS] IMAGE
+```
+
+**Aliases**
+
+```
+docker history
+```
+
+**Options**
+
+```
+      --format string     Format output using a custom template:
+                          'table':            Print output in table format with column headers (default)
+                          'table TEMPLATE':   Print output in table format using the given Go template
+                          'json':             Print in JSON format
+                          'TEMPLATE':         Print output using the given Go template.
+                          Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates
+  -H, --human             Print sizes and dates in human readable format (default true)
+      --no-trunc          Don't truncate output
+      --platform string   Show history for the given platform. Formatted as "os[/arch[/variant]]" (e.g., "linux/amd64")
+  -q, --quiet             Only show image IDs
 ```
 
 **Examples**
