@@ -80,31 +80,28 @@ For example, the command `docker images --filter reference=alpine` filters the o
 
 **Examples**
 
-```
-docker image ls
-```
+* Displaying all images
 
-```
+```console
+$ docker image ls
 REPOSITORY                 TAG       IMAGE ID       CREATED        SIZE
 docker/welcome-to-docker   latest    6caf772f5178   3 weeks ago    14.1MB
 ubuntu                     latest    65ae7a6f3544   5 weeks ago    78.1MB
 hello-world                latest    74cc54e27dc4   6 months ago   10.1kB
 ```
 
-```
-docker images ubuntu
-```
+* Displayed images from ubuntu repository
 
-```
+```console
+$ docker images ubuntu
 REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
 ubuntu       latest    65ae7a6f3544   5 weeks ago   78.1MB
 ```
 
-```
-docker image ls -f "reference=ubuntu"
-```
+* Displaying filtered out images
 
-```
+```console
+$ docker image ls -f "reference=ubuntu"
 REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
 ubuntu       latest    65ae7a6f3544   5 weeks ago   78.1MB
 ```
@@ -131,22 +128,31 @@ Display detailed information on one or more images.
 
 **Examples**
 
-```
-docker image inspect ubuntu
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+debian                     latest    047bd8d81940   11 days ago   120MB
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
+ubuntu                     latest    e0f16e6366fe   3 weeks ago   78.1MB
 ```
 
-```
+```console
+$ docker image inspect ubuntu
 [
     {
-        "Id": "sha256:0abb83f46a8285cb2277da6254f1c1c41705598a3a9946cbe7101036392f45e2",
+        "Id": "sha256:e0f16e6366fef4e695b9f8788819849d265cde40eb84300c0147a6e5261d2750",
         "RepoTags": [
+            "katheroine/ubuntu:latest",
             "ubuntu:latest"
         ],
-        "RepoDigests": [],
+        "RepoDigests": [
+            "katheroine/ubuntu@sha256:1b74ddb96240d6db9ef2a067493998e61f7965d22b76166d04dd3662818bbfdb",
+            "ubuntu@sha256:7c06e91f61fa88c08cc74f7e1b7c69ae24910d745357e0dfe1d2c0322aaf20f9"
+        ],
         "Parent": "",
-        "Comment": "Imported from -",
-        "Created": "2025-08-19T18:51:34.180556348Z",
-        "DockerVersion": "28.1.1",
+        "Comment": "",
+        "Created": "2025-07-30T06:51:03.091147588Z",
+        "DockerVersion": "24.0.7",
         "Author": "",
         "Config": {
             "Hostname": "",
@@ -158,34 +164,41 @@ docker image inspect ubuntu
             "Tty": false,
             "OpenStdin": false,
             "StdinOnce": false,
-            "Env": null,
-            "Cmd": null,
-            "Image": "",
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/bash"
+            ],
+            "Image": "sha256:ea9e91788f89e68d920f76d82b2f764a3539583172a02104cd8e555d3ab8f1ff",
             "Volumes": null,
             "WorkingDir": "",
             "Entrypoint": null,
             "OnBuild": null,
-            "Labels": null
+            "Labels": {
+                "org.opencontainers.image.ref.name": "ubuntu",
+                "org.opencontainers.image.version": "24.04"
+            }
         },
         "Architecture": "amd64",
         "Os": "linux",
-        "Size": 80637789,
+        "Size": 78122494,
         "GraphDriver": {
             "Data": {
-                "MergedDir": "/var/lib/docker/overlay2/ed86862a6c14b13d500c066bf9bb95a10199c610de52f0fe57a33c6232391fe8/merged",
-                "UpperDir": "/var/lib/docker/overlay2/ed86862a6c14b13d500c066bf9bb95a10199c610de52f0fe57a33c6232391fe8/diff",
-                "WorkDir": "/var/lib/docker/overlay2/ed86862a6c14b13d500c066bf9bb95a10199c610de52f0fe57a33c6232391fe8/work"
+                "MergedDir": "/var/lib/docker/overlay2/4498da4ac60983a4742ebc410ff49c2369ca7e3ce310ba57e1311296e2feee84/merged",
+                "UpperDir": "/var/lib/docker/overlay2/4498da4ac60983a4742ebc410ff49c2369ca7e3ce310ba57e1311296e2feee84/diff",
+                "WorkDir": "/var/lib/docker/overlay2/4498da4ac60983a4742ebc410ff49c2369ca7e3ce310ba57e1311296e2feee84/work"
             },
             "Name": "overlay2"
         },
         "RootFS": {
             "Type": "layers",
             "Layers": [
-                "sha256:ccd12804a82bf2a9ea0abab4de9f59ab01e439aa5a8a77df5ff4db400ab8767c"
+                "sha256:cd9664b1462ea111a41bdadf65ce077582cdc77e28683a4f6996dd03afcc56f5"
             ]
         },
         "Metadata": {
-            "LastTagTime": "2025-08-19T20:51:34.186215651+02:00"
+            "LastTagTime": "2025-08-20T23:13:36.132961275+02:00"
         }
     }
 ]
@@ -220,18 +233,22 @@ docker history
 
 **Examples**
 
-```
-docker image history ubuntu
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+debian                     latest    047bd8d81940   11 days ago   120MB
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
+ubuntu                     latest    e0f16e6366fe   3 weeks ago   78.1MB
 ```
 
-```
+```console
 IMAGE          CREATED       CREATED BY                                      SIZE      COMMENT
-65ae7a6f3544   5 weeks ago   /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
-<missing>      5 weeks ago   /bin/sh -c #(nop) ADD file:b4619a63cd7829e13…   78.1MB
-<missing>      5 weeks ago   /bin/sh -c #(nop)  LABEL org.opencontainers.…   0B
-<missing>      5 weeks ago   /bin/sh -c #(nop)  LABEL org.opencontainers.…   0B
-<missing>      5 weeks ago   /bin/sh -c #(nop)  ARG LAUNCHPAD_BUILD_ARCH     0B
-<missing>      5 weeks ago   /bin/sh -c #(nop)  ARG RELEASE                  0B
+e0f16e6366fe   3 weeks ago   /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
+<missing>      3 weeks ago   /bin/sh -c #(nop) ADD file:98599296b3845cfad…   78.1MB
+<missing>      3 weeks ago   /bin/sh -c #(nop)  LABEL org.opencontainers.…   0B
+<missing>      3 weeks ago   /bin/sh -c #(nop)  LABEL org.opencontainers.…   0B
+<missing>      3 weeks ago   /bin/sh -c #(nop)  ARG LAUNCHPAD_BUILD_ARCH     0B
+<missing>      3 weeks ago   /bin/sh -c #(nop)  ARG RELEASE                  0B
 ```
 
 ## [Loading image](https://docs.docker.com/reference/cli/docker/image/load)
@@ -258,22 +275,42 @@ docker load
 
 **Examples**
 
-```
-docker image load < ubuntu_latest.tar.gz
+* Loading image from the compressed archieve file by input redirection
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
 ```
 
-```
+```console
+$ docker image load < ubuntu_latest.tar.gz
 107cbdaeec04: Loading layer [==================================================>]  80.63MB/80.63MB
 Loaded image: ubuntu:latest
 ```
 
-```
-docker load --input ubuntu_latest.tar.gz
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+ubuntu                     latest    107cbdaeec04   5 seconds ago   78.1MB
 ```
 
+* Loading image from the compressed archieve file by input option
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
 ```
+
+```console
+$ docker load --input ubuntu_latest.tar.gz
 107cbdaeec04: Loading layer [==================================================>]  80.63MB/80.63MB
 Loaded image: ubuntu:latest
+```
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+ubuntu                     latest    107cbdaeec04   5 seconds ago   78.1MB
 ```
 
 ## [Importing image](https://docs.docker.com/reference/cli/docker/image/import)
@@ -302,36 +339,73 @@ docker import
 
 The `--change` option applies Dockerfile instructions to the image that is created. Not all Dockerfile instructions are supported; the list of instructions is limited to metadata (configuration) changes. The following Dockerfile instructions are supported:
 
-* CMD
-* ENTRYPOINT
-* ENV
-* EXPOSE
-* HEALTHCHECK
-* LABEL
-* ONBUILD
-* STOPSIGNAL
-* USER
-* VOLUME
-* WORKDIR
+* `CMD`
+* `ENTRYPOINT`
+* `ENV`
+* `EXPOSE`
+* `HEALTHCHECK`
+* `LABEL`
+* `ONBUILD`
+* `STOPSIGNAL`
+* `USER`
+* `VOLUME`
+* `WORKDIR`
 
 **Examples**
 
-* Import from a local file
+* Import from a local compressed archieve file by pipeline
 
-```
-cat ubuntu_latest.tar.gz | docker import - ubuntu:latest
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+$ ls
+ubuntu_latest.tar.gz
 ```
 
-* Import to docker from a local archive
-
+```console
+$ cat ubuntu_latest.tar.gz | docker import - ubuntu:latest
 ```
-docker import ubuntu_latest.tar.gz ubuntu:latest
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
+```
+
+* Import from a local compressed archieve file
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+$ ls
+ubuntu_latest.tar.gz
+```
+
+```console
+$ docker import ubuntu_latest.tar.gz ubuntu:latest
+```
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
 ```
 
 * Import from a remote location
 
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
 ```
-docker import http://localhost/docker-images/ubuntu_latest.tar.gz
+
+```console
+$ docker import http://localhost/docker-images/ubuntu_latest.tar.gz
+```
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+ubuntu                     latest    107cbdaeec04   5 seconds ago   78.1MB
 ```
 
 #### [Saving image](https://docs.docker.com/reference/cli/docker/image/save)
@@ -357,24 +431,72 @@ docker save
 
 **Examples**
 
-```
-docker image save ubuntu > ubuntu_latest.tar
+* Saving image to the compressed archieve file by input redirection
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+ubuntu                     latest    107cbdaeec04   5 seconds ago   78.1MB
 ```
 
-```
-docker image save ubuntu -o ubuntu_latest.tar
-```
-
-```
-docker image save -o ubuntu_latest.tar ubuntu
+```console
+$ docker image save ubuntu > ubuntu_latest.tar
 ```
 
-```
-docker image save -o ubuntu_latest.tar ubuntu:latest
+```console
+$ ls
+ubuntu_latest.tar
 ```
 
+* Saving image to the compressed archieve file by output option
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+ubuntu                     latest    107cbdaeec04   5 seconds ago   78.1MB
 ```
-docker image save ubuntu:latest | gzip > ubuntu_latest.tar.gz
+
+```console
+$ docker image save -o ubuntu_latest.tar ubuntu
+```
+
+```console
+$ ls
+ubuntu_latest.tar
+```
+
+* Saving image of the chooden tag
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+ubuntu                     latest    107cbdaeec04   5 seconds ago   78.1MB
+```
+
+```console
+$ docker image save -o ubuntu_latest.tar ubuntu:latest
+```
+
+```console
+$ ls
+ubuntu_latest.tar
+```
+
+* Saving compressed image
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+ubuntu                     latest    107cbdaeec04   5 seconds ago   78.1MB
+```
+
+```console
+$ docker image save ubuntu:latest | gzip > ubuntu_latest.tar.gz
+```
+
+```console
+$ ls
+ubuntu_latest.tar.gz
 ```
 
 ## [Removing image](https://docs.docker.com/reference/cli/docker/image/rm)
@@ -402,23 +524,38 @@ docker rmi
 
 **Examples**
 
-```
-docker image rm ubuntu
+* Removing image by its repository name
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
 ```
 
-```
+```console
+$ docker image rm ubuntu
 Untagged: ubuntu:latest
 Deleted: sha256:0abb83f46a8285cb2277da6254f1c1c41705598a3a9946cbe7101036392f45e2
 Deleted: sha256:ccd12804a82bf2a9ea0abab4de9f59ab01e439aa5a8a77df5ff4db400ab8767c
 ```
 
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+```
+
+* Removing image by its id
+
 Each SHA256 is an image identifier and each one points out a single removed image. An Docker image can have many layers, each one is seen here as a separate SHA256 ID.
 
-```
-docker image rm 6caf772f5178
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
 ```
 
-```
+```console
+$ docker image rm 107cbdaeec04
 Untagged: docker/welcome-to-docker:latest
 Untagged: docker/welcome-to-docker@sha256:c4d56c24da4f009ecf8352146b43497fe78953edb4c679b841732beb97e588b0
 Deleted: sha256:6caf772f5178c851c3af9138578d587cad36361bdb27d235f5b55d35691c2777
@@ -432,24 +569,50 @@ Deleted: sha256:e6bbf0b400bf1cd15029c06a499f4d8d0512b864f4ecc8d73d4510d06b66ad5a
 Deleted: sha256:418dccb7d85a63a6aa574439840f7a6fa6fd2321b3e2394568a317735e867d35
 ```
 
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+```
+
+* An attempt of removing image used by containers
+
 When there are some containers on the host created from the image, this image cannot be simply deleted. In such case, the option `-f` is needed to be used.
 
-```
-docker image rm 74cc54e27dc4
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
 ```
 
-```
+```console
+$ docker image rm 107cbdaeec04
 Error response from daemon: conflict: unable to delete 74cc54e27dc4 (must be forced) - image is being used by stopped container 10fead0074fa
 ```
 
-```
-docker image rm -f 74cc54e27dc4
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
 ```
 
+* Force removing image used by containers
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
 ```
+
+```console
+$ docker image rm -f 107cbdaeec04
 Untagged: hello-world:latest
 Untagged: hello-world@sha256:ec153840d1e635ac434fab5e377081f17e0e15afab27beb3f726c3265039cfff
 Deleted: sha256:74cc54e27dc41bb10dc4b2226072d469509f2f22f1a3ce74f4a59661a1d44602
+```
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
 ```
 
 ## [Removing unused images](https://docs.docker.com/reference/cli/docker/image/prune)
@@ -468,11 +631,8 @@ https://docs.docker.com/reference/cli/docker/image/prune
 
 **Examples**
 
-```
-docker image prune
-```
-
-```
+```console
+$ docker image prune
 WARNING! This will remove all dangling images.
 Are you sure you want to continue? [y/N] y
 Total reclaimed space: 0B
@@ -511,11 +671,15 @@ docker pull
 
 **Examples**
 
-```
-docker image pull fedora
+* Pulling image from the Docker Hub
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
 ```
 
-```
+```console
+$ docker image pull fedora
 Using default tag: latest
 latest: Pulling from library/fedora
 7b060d214eb0: Pull complete
@@ -524,11 +688,21 @@ Status: Downloaded newer image for fedora:latest
 docker.io/library/fedora:latest
 ```
 
-```
-docker image pull fedora:rawhide
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
 ```
 
+* Pulling image of the choosen tag from the Docker Hub
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
 ```
+
+```console
+$ docker image pull fedora:rawhide
 rawhide: Pulling from library/fedora
 d1e07e1d972b: Pull complete
 Digest: sha256:af660adb8de42682b494c7d102860c155466ba61cd850a8420e1ffad1764b1b7
@@ -536,11 +710,21 @@ Status: Downloaded newer image for fedora:rawhide
 docker.io/library/fedora:rawhide
 ```
 
-```
-docker image pull --all-tags debian
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+fedora                     rawhide   fdc54e0833b1   2 weeks ago   179MB
 ```
 
+* Pulling image of all tags from the Docker Hub
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
 ```
+
+```console
+$ docker image pull --all-tags debian
 10: Pulling from library/debian
 3892befd2c3f: Pull complete
 Digest: sha256:58ce6f1271ae1c8a2006ff7d3e54e9874d839f573d8009c20154ad0f2fb0a225
@@ -551,6 +735,18 @@ Digest: sha256:bb3dc79fddbca7e8903248ab916bb775c96ec61014b3d02b4f06043b604726dc
 4ae16bd47783: Pull complete
 Digest: sha256:2f04d3d33b6027bb74ecc81397abe780649ec89f1a2af18d7022737d0482cefe
 Head "https://registry-1.docker.io/v2/library/debian/manifests/10.0-slim": net/http: TLS handshake timeout
+```
+
+```console
+$ docker image ls
+REPOSITORY   TAG          IMAGE ID       CREATED       SIZE
+debian       10.11-slim   682f678c3fa0   3 years ago   69.3MB
+debian       10.10-slim   4ac8afd4626c   3 years ago   69.3MB
+debian       10.3-slim    e5aad4204d00   5 years ago   69.2MB
+debian       10.2-slim    837fd7c8d960   5 years ago   69.2MB
+debian       10.1-slim    105ec214185d   5 years ago   69.2MB
+debian       10.0-slim    83a10817c894   6 years ago   69.2MB
+
 ```
 
 ## [Tagging images](https://docs.docker.com/reference/cli/docker/image/tag)
@@ -605,12 +801,22 @@ alpine
 
 **Examples**
 
-```
-docker image tag ubuntu:latest katheroine/ubuntu:latest
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+ubuntu                     latest    e0f16e6366fe   3 weeks ago   78.1MB
 ```
 
-```
+```console
+$ docker image tag ubuntu:latest katheroine/ubuntu:latest
 docker tag fdc54e0833b1 katheroine/fedora:rawhide
+```
+
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+katheroine/ubuntu          latest    e0f16e6366fe   3 weeks ago   78.1MB
+ubuntu                     latest    e0f16e6366fe   3 weeks ago   78.1MB
 ```
 
 ## [Uploading an image to a registry](https://docs.docker.com/reference/cli/docker/image/push)
@@ -652,11 +858,15 @@ docker push
 
 **Examples**
 
-```
-docker image push katheroine/ubuntu:latest
+```console
+$ docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+katheroine/ubuntu          latest    e0f16e6366fe   3 weeks ago   78.1MB
+ubuntu                     latest    e0f16e6366fe   3 weeks ago   78.1MB
 ```
 
-```
+```console
+$ docker image push katheroine/ubuntu:latest
 The push refers to repository [docker.io/katheroine/ubuntu]
 cd9664b1462e: Mounted from library/ubuntu
 latest: digest: sha256:1b74ddb96240d6db9ef2a067493998e61f7965d22b76166d04dd3662818bbfdb size: 529

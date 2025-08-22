@@ -114,7 +114,7 @@ CONTAINER ID   IMAGE                      COMMAND                  CREATED      
 53b03c3045a2   ubuntu                     "/bin/bash"              59 minutes ago       Exited (0) 59 minutes ago             sweet_driscoll
 ```
 
-* Displaying filtered containers
+* Displaying filtered out containers
 
 ```console
 $ docker container ls -a -f "status=exited"
