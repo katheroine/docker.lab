@@ -141,6 +141,14 @@ docker container inspect [OPTIONS] CONTAINER [CONTAINER...]
 **Examples**
 
 ```console
+$ docker ps -a
+CONTAINER ID   IMAGE                      COMMAND                  CREATED        STATUS                      PORTS     NAMES
+2a8f7213080a   ubuntu                     "/bin/bash"              46 hours ago   Created                               brave_wozniak
+98a99f1d450e   docker/welcome-to-docker   "/docker-entrypoint.…"   2 days ago     Exited (0) 47 hours ago               keen_herschel
+53b03c3045a2   ubuntu                     "/bin/bash"              2 days ago     Exited (0) 2 days ago                 sweet_driscoll
+```
+
+```console
 $ docker container inspect sweet_driscoll
 [
     {
@@ -376,6 +384,14 @@ docker logs
 **Examples**
 
 ```console
+$ docker ps -a
+CONTAINER ID   IMAGE                      COMMAND                  CREATED        STATUS                      PORTS     NAMES
+2a8f7213080a   ubuntu                     "/bin/bash"              46 hours ago   Created                               brave_wozniak
+98a99f1d450e   docker/welcome-to-docker   "/docker-entrypoint.…"   2 days ago     Exited (0) 47 hours ago               keen_herschel
+53b03c3045a2   ubuntu                     "/bin/bash"              2 days ago     Exited (0) 2 days ago                 sweet_driscoll
+```
+
+```console
 $ docker container logs keen_herschel
 /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
 /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
@@ -413,13 +429,25 @@ docker top
 **Examples**
 
 ```console
+$ docker ps -a
+CONTAINER ID   IMAGE                      COMMAND                  CREATED        STATUS                      PORTS     NAMES
+2a8f7213080a   ubuntu                     "/bin/bash"              46 hours ago   Created                               brave_wozniak
+98a99f1d450e   docker/welcome-to-docker   "/docker-entrypoint.…"   2 days ago     Exited (0) 47 hours ago               keen_herschel
+53b03c3045a2   ubuntu                     "/bin/bash"              2 days ago     Exited (0) 2 days ago                 sweet_driscoll
+$ docker start keen_herschel
+$ docker ps
+CONTAINER ID   IMAGE                      COMMAND                  CREATED      STATUS         PORTS     NAMES
+98a99f1d450e   docker/welcome-to-docker   "/docker-entrypoint.…"   2 days ago   Up 8 seconds   80/tcp    keen_herschel
+```
+
+```console
 $ docker container top keen_herschel
 UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
-root                75829               75804               0                   11:21               ?                   00:00:00            nginx: master process nginx -g daemon off;
-systemd+            75887               75829               0                   11:21               ?                   00:00:00            nginx: worker process
-systemd+            75888               75829               0                   11:21               ?                   00:00:00            nginx: worker process
-systemd+            75889               75829               0                   11:21               ?                   00:00:00            nginx: worker process
-systemd+            75890               75829               0                   11:21               ?                   00:00:00            nginx: worker process
+root                559097              559074              0                   11:15               ?                   00:00:00            nginx: master process nginx -g daemon off;
+systemd+            559147              559097              0                   11:15               ?                   00:00:00            nginx: worker process
+systemd+            559148              559097              0                   11:15               ?                   00:00:00            nginx: worker process
+systemd+            559149              559097              0                   11:15               ?                   00:00:00            nginx: worker process
+systemd+            559150              559097              0                   11:15               ?                   00:00:00            nginx: worker process
 ```
 
 ## [Creating a container](https://docs.docker.com/reference/cli/docker/container/create)
@@ -559,6 +587,12 @@ docker container create -v /host/path:/container/path --name my_container ubuntu
 **Examples**
 
 * Creating container from an image
+```
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS          PORTS     NAMES
+```
 
 ```console
 $ docker container create ubuntu
@@ -567,8 +601,8 @@ $ docker container create ubuntu
 
 ```console
 $ docker ps -a
-CONTAINER ID   IMAGE                      COMMAND                  CREATED         STATUS                      PORTS     NAMES
-2a8f7213080a   ubuntu                     "/bin/bash"              2 minutes ago   Created                               brave_wozniak
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS          PORTS     NAMES
+2a8f7213080a   ubuntu    "/bin/bash"   5 seconds ago   Created                   brave_wozniak
 ```
 
 * Creating container with defined name
@@ -580,12 +614,17 @@ $ docker container create --name panda_wanda ubuntu
 
 ```console
 $ docker ps -a
-CONTAINER ID   IMAGE                      COMMAND                  CREATED         STATUS                      PORTS     NAMES
-7f28aa0afc11   ubuntu                     "/bin/bash"              3 seconds ago   Created                               panda_wanda
-2a8f7213080a   ubuntu                     "/bin/bash"              2 minutes ago   Created                               brave_wozniak
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS          PORTS     NAMES
+7f28aa0afc11   ubuntu    "/bin/bash"   8 seconds ago   Created                   panda_wanda
 ```
 
 * Creating container with interactive mode
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS          PORTS     NAMES
+7f28aa0afc11   ubuntu    "/bin/bash"   8 seconds ago    Created                   panda_wanda
+```
 
 ```console
 $ docker container create -i --name dynia_cedynia ubuntu
@@ -594,10 +633,9 @@ ef1d776ab8d0d85ce922b962f275612b68d550026d72ed4165066919f6fe0761
 
 ```console
 $ docker ps -a
-CONTAINER ID   IMAGE                      COMMAND                  CREATED         STATUS                      PORTS     NAMES
-2a8f7213080a   ubuntu                     "/bin/bash"              2 minutes ago   Created                               brave_wozniak
-98a99f1d450e   docker/welcome-to-docker   "/docker-entrypoint.…"   2 hours ago     Exited (0) 33 minutes ago             keen_herschel
-53b03c3045a2   ubuntu                     "/bin/bash"              3 hours ago     Exited (0) 3 hours ago                sweet_driscoll
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS          PORTS     NAMES
+ef1d776ab8d0   ubuntu    "/bin/bash"   5 seconds ago    Created                   dynia_cedynia
+7f28aa0afc11   ubuntu    "/bin/bash"   13 seconds ago   Created                   panda_wanda
 ```
 
 ```console
@@ -607,16 +645,24 @@ $ docker start dynia_cedynia
 dynia_cedynia
 $ docker ps
 CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS         PORTS     NAMES
-ef1d776ab8d0   ubuntu    "/bin/bash"   41 seconds ago   Up 9 seconds             dynia_cedynia
+ef1d776ab8d0   ubuntu    "/bin/bash"   15 seconds ago   Up 3 seconds             dynia_cedynia
 ```
 
 ```console
+$ docker stop dynia_cedynia
+dynia_cedynia
 $ docker start -i panda_wanda
 $ docker start -i dynia_cedynia
 ^Ccontext canceled
 ```
 
-* Creating container with interactive mode annd pseudo-TTY allocated
+* Creating container with interactive mode and pseudo-TTY allocated
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS         PORTS     NAMES
+ef1d776ab8d0   ubuntu    "/bin/bash"   30 seconds ago   Up 2 minutes             dynia_cedynia
+```
 
 ```console
 $ docker container create -i -t --name ogorek_bonzurek fedora
@@ -625,11 +671,9 @@ cbcdf3bbf762e8cbc6e288b67ed8182efbda0dd86fc092f176a19006b5aeba35
 
 ```console
 $ docker ps -a
-CONTAINER ID   IMAGE                      COMMAND                  CREATED          STATUS                         PORTS     NAMES
-cbcdf3bbf762   fedora                     "/bin/bash"              11 seconds ago   Created                                  ogorek_bonzurek
-ef1d776ab8d0   ubuntu                     "/bin/bash"              12 minutes ago   Up 12 minutes                            dynia_cedynia
-7f28aa0afc11   ubuntu                     "/bin/bash"              33 minutes ago   Exited (0) 12 minutes ago                panda_wanda
-2a8f7213080a   ubuntu                     "/bin/bash"              35 minutes ago   Created                                  brave_wozniak
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS          PORTS     NAMES
+cbcdf3bbf762   fedora    "/bin/bash"   5 seconds ago    Created                   ogorek_bonzurek
+ef1d776ab8d0   ubuntu    "/bin/bash"   35 seconds ago   Up 2 minutes              dynia_cedynia
 ```
 
 ```console
@@ -639,22 +683,36 @@ $ docker start ogorek_bonzurek
 ogorek_bonzurek
 $ docker ps
 CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS          PORTS     NAMES
-cbcdf3bbf762   fedora    "/bin/bash"   22 minutes ago   Up 7 seconds              ogorek_bonzurek
-ef1d776ab8d0   ubuntu    "/bin/bash"   34 minutes ago   Up 11 seconds             dynia_cedynia
+cbcdf3bbf762   fedora    "/bin/bash"   15 seconds ago   Up 7 seconds              ogorek_bonzurek
+ef1d776ab8d0   ubuntu    "/bin/bash"   45 seconds ago   Up 11 seconds             dynia_cedynia
 ```
 
 ```console
+$ docker stop dynia_cedynia ogorek_bonzurek
+dynia_cedynia
+ogorek_bonzurek
 $ docker start -i dynia_cedynia
 ^Ccontext canceled
 $ docker start -i ogorek_bonzurek
 [root@cbcdf3bbf762 /]#
 ```
 
-* Creating container with interactive mode annd pseudo-TTY allocated and volume mapping
+* Creating container with interactive mode and pseudo-TTY allocated and volume mapping
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS          PORTS     NAMES
+```
 
 ```console
 $ docker container create -i -t --name wazka_apaszka -v ./volume:/home/katheroine  debian
 c08136aaeebd2d8f8973288132bda3d71b1aaa631251dc972d45f4205c32b5eb
+```
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS          PORTS     NAMES
+c08136aaeebd   debian    "bash"        5 seconds ago    Created                   wazka_apaszka
 ```
 
 ```console

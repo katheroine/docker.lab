@@ -242,6 +242,7 @@ ubuntu                     latest    e0f16e6366fe   3 weeks ago   78.1MB
 ```
 
 ```console
+$ docker image history ubuntu
 IMAGE          CREATED       CREATED BY                                      SIZE      COMMENT
 e0f16e6366fe   3 weeks ago   /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
 <missing>      3 weeks ago   /bin/sh -c #(nop) ADD file:98599296b3845cfad…   78.1MB
