@@ -731,3 +731,282 @@ hello.txt
 root@c08136aaeebd:/home/katheroine# cat hello.txt
 Hello, Docker!
 ```
+
+## [Removing container](https://docs.docker.com/reference/cli/docker/container/rm)
+
+```
+docker container rm [OPTIONS] CONTAINER [CONTAINER...]
+```
+
+**Aliases**
+
+```
+docker container remove
+```
+
+```
+docker rm
+```
+
+**Options**
+
+```
+  -f, --force     Force the removal of a running container (uses SIGKILL)
+  -l, --link      Remove the specified link
+  -v, --volumes   Remove anonymous volumes associated with the container
+```
+
+**Examples**
+
+* Removing container by its name
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE                      COMMAND                  CREATED        STATUS     PORTS     NAMES
+1dca089c649a   debian                     "bash"                   44 hours ago   Created              gniotek_maskotek
+c7619a41a1d5   fedora                     "/bin/bash"              44 hours ago   Created              kwiatek_wariatek
+81bcca685498   ubuntu                     "/bin/bash"              45 hours ago   Created              kubek_belzebubek
+```
+
+```console
+$ docker container rm kwiatek_wariatek
+kwiatek_wariatek
+```
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE                      COMMAND                  CREATED        STATUS     PORTS     NAMES
+1dca089c649a   debian                     "bash"                   44 hours ago   Created              gniotek_maskotek
+81bcca685498   ubuntu                     "/bin/bash"              45 hours ago   Created              kubek_belzebubek
+```
+
+* Removing container by its id
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE                      COMMAND                  CREATED        STATUS     PORTS     NAMES
+1dca089c649a   debian                     "bash"                   44 hours ago   Created              gniotek_maskotek
+c7619a41a1d5   fedora                     "/bin/bash"              44 hours ago   Created              kwiatek_wariatek
+81bcca685498   ubuntu                     "/bin/bash"              45 hours ago   Created              kubek_belzebubek
+```
+
+```console
+$ docker container rm c7619a41a1d5
+kwiatek_wariatek
+```
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE                      COMMAND                  CREATED        STATUS     PORTS     NAMES
+1dca089c649a   debian                     "bash"                   44 hours ago   Created              gniotek_maskotek
+81bcca685498   ubuntu                     "/bin/bash"              45 hours ago   Created              kubek_belzebubek
+```
+
+* An attempt of removing running container
+
+When a container is running, it cannot be simply deleted. In such case, the option `-f` is needed to be used.
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS         PORTS     NAMES
+c7619a41a1d5   fedora    "/bin/bash"   11 minutes ago   Up 2 minutes             kwiatek_wariatek
+```
+
+```console
+$ docker container rm c7619a41a1d5
+Error response from daemon: cannot remove container "/kwiatek_wariatek": container is running: stop the container before removing or force remove
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS         PORTS     NAMES
+c7619a41a1d5   fedora    "/bin/bash"   11 minutes ago   Up 2 minutes             kwiatek_wariatek
+```
+
+* Force removing running container
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS         PORTS     NAMES
+c7619a41a1d5   fedora    "/bin/bash"   11 minutes ago   Up 2 minutes             kwiatek_wariatek
+```
+
+```console
+$ docker container rm -f c7619a41a1d5
+c7619a41a1d5
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+## [Removing stopped containers](https://docs.docker.com/reference/cli/docker/container/prune)
+
+```
+docker container prune [OPTIONS]
+```
+
+**Options**
+
+```
+      --filter filter   Provide filter values (e.g. "until=<timestamp>")
+  -f, --force           Do not prompt for confirmation
+```
+
+**Examples**
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED        STATUS                      PORTS     NAMES
+1dca089c649a   debian    "bash"        46 hours ago   Created                               gniotek_maskotek
+81bcca685498   ubuntu    "/bin/bash"   47 hours ago   Created                               kubek_belzebubek
+c08136aaeebd   debian    "bash"        7 days ago     Exited (127) 6 days ago               wazka_apaszka
+cbcdf3bbf762   fedora    "/bin/bash"   7 days ago     Exited (137) 46 hours ago             ogorek_bonzurek
+ef1d776ab8d0   ubuntu    "/bin/bash"   7 days ago     Exited (137) 46 hours ago             dynia_cedynia
+7f28aa0afc11   ubuntu    "/bin/bash"   7 days ago     Exited (0) 47 hours ago               panda_wanda
+```
+
+```console
+$ docker container prune
+WARNING! This will remove all stopped containers.
+Are you sure you want to continue? [y/N] y
+Deleted Containers:
+1dca089c649a0c3da312797644d50a3b35b9b5646c33d0bcff1dc4b57423728d
+81bcca685498013d48abb347a96bc99c6e9492166b38c3df592f0d130b3ddd7a
+c08136aaeebd2d8f8973288132bda3d71b1aaa631251dc972d45f4205c32b5eb
+cbcdf3bbf762e8cbc6e288b67ed8182efbda0dd86fc092f176a19006b5aeba35
+ef1d776ab8d0d85ce922b962f275612b68d550026d72ed4165066919f6fe0761
+7f28aa0afc113e6571a7fe1301a27c12e070314f58c2a8ff3afbd0004c95feb6
+
+Total reclaimed space: 59B
+```
+
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+## [Starting containers](https://docs.docker.com/reference/cli/docker/container/start)
+
+```
+docker container start [OPTIONS] CONTAINER [CONTAINER...]
+```
+
+**Aliases**
+
+```
+docker start
+```
+
+**Options**
+
+```
+  -a, --attach               Attach STDOUT/STDERR and forward signals
+      --detach-keys string   Override the key sequence for detaching a container
+  -i, --interactive          Attach container's STDIN
+```
+
+**Examples**
+
+```console
+$ docker container create --name maskotka_trzpiotka fedora
+$ docker container create -i --name spinacz_wyginacz debian
+$ docker container create -i -t --name agrafka_ustawka ubuntu
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS    PORTS     NAMES
+fbc250c131c0   ubuntu    "/bin/bash"   4 seconds ago   Created             agrafka_ustawka
+66688bcd5773   debian    "bash"        2 minutes ago   Created             spinacz_wyginacz
+5685725054bf   fedora    "/bin/bash"   5 minutes ago   Created             trzpiotka_maskotka
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+```console
+$ docker container start maskotka_trzpiotka
+maskotka_trzpiotka
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS     NAMES
+fbc250c131c0   ubuntu    "/bin/bash"   34 minutes ago   Created                               agrafka_ustawka
+66688bcd5773   debian    "bash"        37 minutes ago   Created                               spinacz_wyginacz
+5685725054bf   fedora    "/bin/bash"   39 minutes ago   Exited (0) 22 seconds ago             maskotka_trzpiotka
+```
+
+* Starting a container noninteractively
+
+```console
+$ docker container create --name maskotka_trzpiotka fedora
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS    PORTS     NAMES
+5685725054bf   fedora    "/bin/bash"   5 minutes ago   Created             trzpiotka_maskotka
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+```console
+$ docker container start maskotka_trzpiotka
+maskotka_trzpiotka
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS     NAMES
+5685725054bf   fedora    "/bin/bash"   6 minutes ago    Exited (0) 10 seconds ago             maskotka_trzpiotka
+```
+
+* Starting interactively a container with interactive mode
+
+```console
+$ docker container create -i --name spinacz_wyginacz debian
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS    PORTS     NAMES
+66688bcd5773   debian    "bash"    5 minutes ago   Created             spinacz_wyginacz
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+```console
+$ docker container start -i spinacz_wyginacz
+
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS          PORTS     NAMES
+66688bcd5773   debian    "bash"    6 minutes ago   Up 10 seconds             spinacz_wyginacz
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS          PORTS     NAMES
+66688bcd5773   debian    "bash"    6 minutes ago   Up 15 seconds             spinacz_wyginacz
+```
+
+* Starting interactively a container with interactive mode and pseudo-TTY allocated
+
+```console
+$ docker container create -i -t --name agrafka_ustawka ubuntu
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS    PORTS     NAMES
+fbc250c131c0   ubuntu    "/bin/bash"   5 minutes ago   Created             agrafka_ustawka
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+```console
+$ docker container start -i agrafka_ustawka
+root@fbc250c131c0:/#
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS          PORTS     NAMES
+fbc250c131c0   ubuntu    "/bin/bash"   6 minutes ago   Up 10 seconds             agrafka_ustawka
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS          PORTS     NAMES
+fbc250c131c0   ubuntu    "/bin/bash"   6 minutes ago   Up 10 seconds             agrafka_ustawka
+```
