@@ -530,7 +530,9 @@ docker rmi
 ```console
 $ docker images
 REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
 ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
+debian                     latest    047bd8d81940   4 weeks ago   120MB
 ```
 
 ```console
@@ -543,6 +545,8 @@ Deleted: sha256:ccd12804a82bf2a9ea0abab4de9f59ab01e439aa5a8a77df5ff4db400ab8767c
 ```console
 $ docker images
 REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
+debian                     latest    047bd8d81940   4 weeks ago   120MB
 ```
 
 * Removing image by its id
@@ -552,7 +556,9 @@ Each SHA256 is an image identifier and each one points out a single removed imag
 ```console
 $ docker images
 REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
 ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
+debian                     latest    047bd8d81940   4 weeks ago   120MB
 ```
 
 ```console
@@ -573,6 +579,8 @@ Deleted: sha256:418dccb7d85a63a6aa574439840f7a6fa6fd2321b3e2394568a317735e867d35
 ```console
 $ docker images
 REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
+debian                     latest    047bd8d81940   4 weeks ago   120MB
 ```
 
 * An attempt of removing image used by containers
@@ -582,7 +590,9 @@ When there are some containers on the host created from the image, this image ca
 ```console
 $ docker images
 REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
 ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
+debian                     latest    047bd8d81940   4 weeks ago   120MB
 ```
 
 ```console
@@ -593,7 +603,9 @@ Error response from daemon: conflict: unable to delete 74cc54e27dc4 (must be for
 ```console
 $ docker images
 REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
 ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
+debian                     latest    047bd8d81940   4 weeks ago   120MB
 ```
 
 * Force removing image used by containers
@@ -601,7 +613,9 @@ ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
 ```console
 $ docker images
 REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
 ubuntu                     latest    107cbdaeec04   3 weeks ago   78.1MB
+debian                     latest    047bd8d81940   4 weeks ago   120MB
 ```
 
 ```console
@@ -613,7 +627,8 @@ Deleted: sha256:74cc54e27dc41bb10dc4b2226072d469509f2f22f1a3ce74f4a59661a1d44602
 
 ```console
 $ docker images
-REPOSITORY                 TAG       IMAGE ID       CREATED       SIZE
+fedora                     latest    f464a67b6b66   2 weeks ago   164MB
+debian                     latest    047bd8d81940   4 weeks ago   120MB
 ```
 
 ## [Removing unused images](https://docs.docker.com/reference/cli/docker/image/prune)

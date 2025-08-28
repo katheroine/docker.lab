@@ -2,6 +2,7 @@
 
 1. [What is Docker CLI](#what-is-docker-cli)
 2. [Managing images](basics/cli_images.md)
+3. [Managing containers](basics/cli_containers.md)
 
 ## What is Docker CLI
 
