@@ -937,7 +937,7 @@ fbc250c131c0   ubuntu    "/bin/bash"   34 minutes ago   Created                 
 5685725054bf   fedora    "/bin/bash"   39 minutes ago   Exited (0) 22 seconds ago             maskotka_trzpiotka
 ```
 
-* Starting a container noninteractively
+* Starting noninteractively a container without interactive mode
 
 ```console
 $ docker container create --name maskotka_trzpiotka fedora
@@ -947,6 +947,8 @@ CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS    PORTS     NAMES
 $ docker ps
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
+
+When a container has been created without an interactive mode, after `docker start` it will do its job and exit. It won't be listed on the `docker ps` output but the evidence it has been run will be visible on the `docker ps -a` list.
 
 ```console
 $ docker container start maskotka_trzpiotka
@@ -961,6 +963,55 @@ CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                  
 5685725054bf   fedora    "/bin/bash"   6 minutes ago    Exited (0) 10 seconds ago             maskotka_trzpiotka
 ```
 
+* Starting interactively a container without interactive mode
+
+```console
+$ docker container create --name maskotka_trzpiotka fedora
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS    PORTS     NAMES
+5685725054bf   fedora    "/bin/bash"   5 minutes ago   Created             trzpiotka_maskotka
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+When a container has been created without an interactive mode, even after `docker start -i` it will do its job and exit. As in the previous case, it won't be listed on the `docker ps` output but the evidence it has been run will be visible on the `docker ps -a` list.
+
+```console
+$ docker container start -i maskotka_trzpiotka
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS     NAMES
+5685725054bf   fedora    "/bin/bash"   6 minutes ago    Exited (0) 10 seconds ago             maskotka_trzpiotka
+```
+
+* Starting noninteractively a container with interactive mode
+
+```console
+$ docker container create -i --name spinacz_wyginacz debian
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS    PORTS     NAMES
+66688bcd5773   debian    "bash"    5 minutes ago   Created             spinacz_wyginacz
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+When a container has been created with an interactive mode, after `docker start` it will do its job and still be running but the control will leave the container context and will return to the host console. The container will be listed on the `docker ps` output.
+
+```console
+$ docker container start spinacz_wyginacz
+spinacz_wyginacz
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS          PORTS     NAMES
+66688bcd5773   debian    "bash"    6 minutes ago   Up 10 seconds             spinacz_wyginacz
+```
+
 * Starting interactively a container with interactive mode
 
 ```console
@@ -972,6 +1023,8 @@ $ docker ps
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
+When a container has been created with an interactive mode, after `docker start -i` it will do its job and still be running without leaving the container context until user hits `[Ctrl]+[C]`. The container will be listed on the `docker ps` output untill hitting `[Ctrl]+[C]` conbination. `[Ctrl]+[C]` pressed in the container context stops the container.
+
 ```console
 $ docker container start -i spinacz_wyginacz
 
@@ -981,9 +1034,6 @@ $ docker container start -i spinacz_wyginacz
 $ docker ps
 CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS          PORTS     NAMES
 66688bcd5773   debian    "bash"    6 minutes ago   Up 10 seconds             spinacz_wyginacz
-$ docker ps -a
-CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS          PORTS     NAMES
-66688bcd5773   debian    "bash"    6 minutes ago   Up 15 seconds             spinacz_wyginacz
 ```
 
 * Starting interactively a container with interactive mode and pseudo-TTY allocated
@@ -997,6 +1047,8 @@ $ docker ps
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
+When a container has been created with an interactive mode and  pseudo-TTY allocated, after `docker start -i` it will do its job and still be running without leaving the container context with TTY wainting for the user commands, until exit the TTY. The container will be listed on the `docker ps` output untill TTY stop.
+
 ```console
 $ docker container start -i agrafka_ustawka
 root@fbc250c131c0:/#
@@ -1004,9 +1056,6 @@ root@fbc250c131c0:/#
 
 ```console
 $ docker ps
-CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS          PORTS     NAMES
-fbc250c131c0   ubuntu    "/bin/bash"   6 minutes ago   Up 10 seconds             agrafka_ustawka
-$ docker ps -a
 CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS          PORTS     NAMES
 fbc250c131c0   ubuntu    "/bin/bash"   6 minutes ago   Up 10 seconds             agrafka_ustawka
 ```
