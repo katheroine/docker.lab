@@ -909,32 +909,38 @@ docker start
 
 **Examples**
 
+* Starting a container without STDOUR/STDERR attached
+
 ```console
-$ docker container create --name maskotka_trzpiotka fedora
-$ docker container create -i --name spinacz_wyginacz debian
-$ docker container create -i -t --name agrafka_ustawka ubuntu
+$ docker container create -it --name komunikacja_abstrakcja debian sh -c "echo 'This is the message from STDOUT.'"
+b16b662e1e0abb62a0c6bb694eeacd6a9ce17c744e77fbdc4781120d4d0e9b37
 $ docker ps -a
-CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS    PORTS     NAMES
-fbc250c131c0   ubuntu    "/bin/bash"   4 seconds ago   Created             agrafka_ustawka
-66688bcd5773   debian    "bash"        2 minutes ago   Created             spinacz_wyginacz
-5685725054bf   fedora    "/bin/bash"   5 minutes ago   Created             trzpiotka_maskotka
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS    PORTS     NAMES
+b16b662e1e0a   debian    "sh -c 'echo 'This i…"   13 seconds ago   Created             komunikacja_abstrakcja
 $ docker ps
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
 ```console
-$ docker container start maskotka_trzpiotka
-maskotka_trzpiotka
+$ docker container start komunikacja_abstrakcja
+komunikacja_abstrakcja
+```
+
+* Starting a container with STDOUR/STDERR attached
+
+```console
+$ docker container create -it --name komunikacja_abstrakcja debian sh -c "echo 'This is the message from STDOUT.'"
+b16b662e1e0abb62a0c6bb694eeacd6a9ce17c744e77fbdc4781120d4d0e9b37
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS    PORTS     NAMES
+b16b662e1e0a   debian    "sh -c 'echo 'This i…"   13 seconds ago   Created             komunikacja_abstrakcja
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
 ```console
-$ docker ps
-CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
-$ docker ps -a
-CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS     NAMES
-fbc250c131c0   ubuntu    "/bin/bash"   34 minutes ago   Created                               agrafka_ustawka
-66688bcd5773   debian    "bash"        37 minutes ago   Created                               spinacz_wyginacz
-5685725054bf   fedora    "/bin/bash"   39 minutes ago   Exited (0) 22 seconds ago             maskotka_trzpiotka
+$ docker container start -a komunikacja_abstrakcja
+This is the message from STDOUT.
 ```
 
 * Starting noninteractively a container without interactive mode
@@ -1047,7 +1053,7 @@ $ docker ps
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
-When a container has been created with an interactive mode and  pseudo-TTY allocated, after `docker start -i` it will do its job and still be running without leaving the container context with TTY wainting for the user commands, until exit the TTY. The container will be listed on the `docker ps` output untill TTY stop.
+When a container has been created with an interactive mode and pseudo-TTY allocated, after `docker start -i` it will do its job and still be running without leaving the container context with TTY waiting for the user commands, until exit the TTY. The container will be listed on the `docker ps` output untill TTY stop.
 
 ```console
 $ docker container start -i agrafka_ustawka
