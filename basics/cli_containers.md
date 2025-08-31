@@ -1065,3 +1065,42 @@ $ docker ps
 CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS          PORTS     NAMES
 fbc250c131c0   ubuntu    "/bin/bash"   6 minutes ago   Up 10 seconds             agrafka_ustawka
 ```
+
+* Difference between `-a` and `-i` options
+
+```console
+$ docker container create -it --name starterek_leserek ubuntu sh -c 'echo "Container started. Type something and press Enter:" && read input && echo "You typed: $input"'
+deb15a78ef7aa432ec928a075000e0fc9ea580f51043ea61cb8491187221b93b
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS    PORTS     NAMES
+deb15a78ef7a   ubuntu    "sh -c 'echo 'Contai…"   5 minutes ago    Created             starterek_leserek
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+```console
+$ docker container start -a starterek_leserek
+Container started. Type something and press Enter:
+Hello
+^Ccontext canceled
+```
+
+```console
+docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS     NAMES
+deb15a78ef7a   ubuntu    "sh -c 'echo 'Contai…"   6 minutes ago   Up 5 minutes             starterek_leserek
+$ docker container stop starterek_leserek
+starterek_leserek
+```
+
+```console
+$ docker container start -i starterek_leserek
+Container started. Type something and press Enter:
+Hello
+You typed: Hello
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
