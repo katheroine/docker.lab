@@ -909,6 +909,54 @@ docker start
 
 **Examples**
 
+* Starting a container by its name
+
+```console
+$ docker container create --name maskotka_trzpiotka fedora
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS    PORTS     NAMES
+5685725054bf   fedora    "/bin/bash"   5 minutes ago   Created             trzpiotka_maskotka
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+```console
+$ docker container start maskotka_trzpiotka
+maskotka_trzpiotka
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS     NAMES
+5685725054bf   fedora    "/bin/bash"   6 minutes ago    Exited (0) 10 seconds ago             maskotka_trzpiotka
+```
+
+* Starting a container by its ID
+
+```console
+$ docker container create --name maskotka_trzpiotka fedora
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED         STATUS    PORTS     NAMES
+5685725054bf   fedora    "/bin/bash"   5 minutes ago   Created             trzpiotka_maskotka
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+```console
+$ docker container start 5685725054bf
+5685725054bf
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS     NAMES
+5685725054bf   fedora    "/bin/bash"   6 minutes ago    Exited (0) 10 seconds ago             maskotka_trzpiotka
+```
+
 * Starting a container without STDOUR/STDERR attached
 
 ```console
@@ -1078,6 +1126,8 @@ $ docker ps
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
+Using `-a` option will allow to see the output of the container redirected to STDOUT of the host but will not allow to send the user input from the host STDIN to the container. Hitting `[Ctrl]+[C]` will cause exit the container context but the system of the container will be still waiting for the user input.
+
 ```console
 $ docker container start -a starterek_leserek
 Container started. Type something and press Enter:
@@ -1093,6 +1143,8 @@ $ docker container stop starterek_leserek
 starterek_leserek
 ```
 
+Using the `-i` option will allow to see the output of the container redirected to STDOUT of the host and will allow to send the user input from the host STDIN to the container. The system of the container will be able to finish its job.
+
 ```console
 $ docker container start -i starterek_leserek
 Container started. Type something and press Enter:
@@ -1103,4 +1155,90 @@ You typed: Hello
 ```console
 $ docker ps
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+## [Stopping containers](https://docs.docker.com/reference/cli/docker/container/stop)
+
+```
+docker container stop [OPTIONS] CONTAINER [CONTAINER...]
+```
+
+**Aliases**
+
+```
+docker stop
+```
+
+**Options**
+
+```
+  -s, --signal string   Signal to send to the container
+  -t, --timeout int     Seconds to wait before killing the container
+```
+
+**Examples**
+
+* Stopping a container by its name
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE                             COMMAND                  CREATED        STATUS         PORTS                                     NAMES
+e3b2a7d02680   docker/welcome-to-docker:latest   "/docker-entrypoint.…"   10 hours ago   Up 4 seconds   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   ekierka_szpanerka
+```
+
+```console
+$ docker container stop ekierka_szpanerka
+ekierka_szpanerka
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+$ docker ps -a
+CONTAINER ID   IMAGE                             COMMAND                   CREATED        STATUS                      PORTS     NAMES
+e3b2a7d02680   docker/welcome-to-docker:latest   "/docker-entrypoint.…"    10 hours ago   Exited (0) 25 seconds ago             ekierka_szpanerka
+```
+
+* Stopping a container by its ID
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE                             COMMAND                  CREATED        STATUS         PORTS                                     NAMES
+e3b2a7d02680   docker/welcome-to-docker:latest   "/docker-entrypoint.…"   10 hours ago   Up 4 seconds   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   ekierka_szpanerka
+```
+
+```console
+$ docker container stop e3b2a7d02680
+e3b2a7d02680
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+$ docker ps -a
+CONTAINER ID   IMAGE                             COMMAND                   CREATED        STATUS                      PORTS     NAMES
+e3b2a7d02680   docker/welcome-to-docker:latest   "/docker-entrypoint.…"    10 hours ago   Exited (0) 25 seconds ago             ekierka_szpanerka
+```
+
+* Stopping container by chosen signal
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE                             COMMAND                  CREATED        STATUS         PORTS                                     NAMES
+e3b2a7d02680   docker/welcome-to-docker:latest   "/docker-entrypoint.…"   10 hours ago   Up 4 seconds   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   ekierka_szpanerka
+```
+
+By default, the signal sending to the system of the container is a `TERM` singnal given by its number `7` or name `SIGTERM`, which gives the `0` code of the status displayed by `docker ps -a`. After choosing `KILL` signal given by its number `9` or name `SIGKILL`, thecontainer system stops immediately, and the code `137` of the status displayed by `docker ps -a` is shown.
+
+```console
+$ docker container stop -s 9 ekierka_szpanerka
+ekierka_szpanerka
+```
+
+```console
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+$ docker ps -a
+CONTAINER ID   IMAGE                             COMMAND                   CREATED        STATUS                       PORTS     NAMES
+e3b2a7d02680   docker/welcome-to-docker:latest   "/docker-entrypoint.…"    10 hours ago   Exited (137) 25 seconds ago            ekierka_szpanerka
 ```
