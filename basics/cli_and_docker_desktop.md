@@ -1,4 +1,4 @@
-# Basics
+# Docker CLI with Docker Desktop
 
 ## Creating containers
 

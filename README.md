@@ -10,7 +10,7 @@ Laboratory of Docker.
     1. [Introduction to the Docker CLI](basics/cli_intro.md)
     2. [Managing images](basics/cli_images.md)
     3. [Managing containers](basics/cli_containers.md)
-4. [Basics](basics/basics.md)
+    4. [CLI with Docker Desktop](basics/cli_and_docker_desktop.md)
 5. [Examples](examples/)
     1. [Hello World in PHP on Apache from prepared image](examples/hello-php/hello-php.md)
     2. [Hello World in PHP on Apache from scratch](examples/hello-php-and-apache/hello-php-and-apache.md)
