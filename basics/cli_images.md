@@ -1,5 +1,18 @@
 # [Managing images](https://docs.docker.com/reference/cli/docker/image)
 
+1. [Displaying all commands managing images](#displaying-all-commands-managing-images)
+2. [Displaying images](#displaying-images)
+3. [Displaying information about an image](#displaying-information-about-an-image)
+4. [Showing history of an image](#showing-history-of-an-image)
+5. [Loading an image](#loading-an-image)
+6. [Importing an image](#importing-an-image)
+7. [Saving an image](#saving-an-image)
+8. [Removing an image](#removing-an-image)
+9. [Removing unused images](#removing-unused-images)
+10. [Downloading an image from a registry](#downloading-an-image-from-a-registry)
+11. [Tagging an image](#tagging-an-image)
+12. [Uploading an image to a registry](#uploading-an-image-to-a-registry)
+
 ## [Displaying all commands managing images](https://docs.docker.com/reference/cli/docker/image)
 
 ```
@@ -106,7 +119,7 @@ REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
 ubuntu       latest    65ae7a6f3544   5 weeks ago   78.1MB
 ```
 
-## [Displayed information about an image](https://docs.docker.com/reference/cli/docker/inspect/)
+## [Displaying information about an image](https://docs.docker.com/reference/cli/docker/inspect/)
 
 ```
 docker image inspect [OPTIONS] IMAGE [IMAGE...]
@@ -252,7 +265,7 @@ e0f16e6366fe   3 weeks ago   /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
 <missing>      3 weeks ago   /bin/sh -c #(nop)  ARG RELEASE                  0B
 ```
 
-## [Loading image](https://docs.docker.com/reference/cli/docker/image/load)
+## [Loading an image](https://docs.docker.com/reference/cli/docker/image/load)
 
 ```
 docker image load [OPTIONS]
@@ -314,7 +327,7 @@ REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
 ubuntu                     latest    107cbdaeec04   5 seconds ago   78.1MB
 ```
 
-## [Importing image](https://docs.docker.com/reference/cli/docker/image/import)
+## [Importing an image](https://docs.docker.com/reference/cli/docker/image/import)
 
 ```
 docker image import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]
@@ -409,7 +422,7 @@ REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
 ubuntu                     latest    107cbdaeec04   5 seconds ago   78.1MB
 ```
 
-#### [Saving image](https://docs.docker.com/reference/cli/docker/image/save)
+## [Saving an image](https://docs.docker.com/reference/cli/docker/image/save)
 
 ```
 docker image save [OPTIONS] IMAGE [IMAGE...]
@@ -500,7 +513,7 @@ $ ls
 ubuntu_latest.tar.gz
 ```
 
-## [Removing image](https://docs.docker.com/reference/cli/docker/image/rm)
+## [Removing an image](https://docs.docker.com/reference/cli/docker/image/rm)
 
 ```
 docker image rm [OPTIONS] IMAGE [IMAGE...]
@@ -765,7 +778,7 @@ debian       10.0-slim    83a10817c894   6 years ago   69.2MB
 
 ```
 
-## [Tagging images](https://docs.docker.com/reference/cli/docker/image/tag)
+## [Tagging an image](https://docs.docker.com/reference/cli/docker/image/tag)
 
 ```
 docker image tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]

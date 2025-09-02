@@ -1,10 +1,4 @@
-# CLI
-
-1. [What is Docker CLI](#what-is-docker-cli)
-2. [Managing images](basics/cli_images.md)
-3. [Managing containers](basics/cli_containers.md)
-
-## What is Docker CLI
+# Introduction to the Docker CLI
 
 **Docker CLI** tool is *a command line application used to interact with the `dockerd` daemon*. The `dockerd` daemon is the process that manages containers and handles all the commands sent from the CLI by exposing an API endpoint. So both dockerd and Docker CLI pieces are needed for docker to work.
 
@@ -16,9 +10,9 @@ Depending on your Docker system configuration, you may be required to preface ea
 
 -- [Docker Documentation](https://docs.docker.com/reference/cli/docker)
 
-## Most important [Docker CLI commands](https://docs.docker.com/reference/cli/docker)
+# Most important [Docker CLI commands](https://docs.docker.com/reference/cli/docker)
 
-### [Displaying all Docker CLI high-level commands](https://docs.docker.com/reference/cli/docker)
+## [Displaying all Docker CLI high-level commands](https://docs.docker.com/reference/cli/docker)
 
 ```bash
 docker
@@ -114,4 +108,3 @@ Run 'docker COMMAND --help' for more information on a command.
 
 For more help on how to use Docker, head to https://docs.docker.com/go/guides/
 ```
-

@@ -1,5 +1,17 @@
 # [Managing containers](https://docs.docker.com/reference/cli/docker/container)
 
+1. [Displaying all commands managing containers](#displaying-all-commands-managing-containers)
+2. [Displaying containers](#displaying-containers)
+3. [Displayed information about a container](#displayed-information-about-a-container)
+4. [Showing logs of a container](#showing-logs-of-a-container)
+5. [Displaying top processes running on a container](#displaying-top-processes-running-on-a-container)
+6. [Creating a container](#creating-a-container)
+7. [Removing a container](#removing-a-container)
+8. [Removing stopped containers](#removing-stopped-containers)
+9. [Starting containers](#starting-containers)
+10. [Stopping containers](#stopping-containers)
+11. [Running (creating & starting) a container](#running-a-container)
+
 ## [Displaying all commands managing containers](https://docs.docker.com/reference/cli/docker/container)
 
 ```
@@ -732,7 +744,7 @@ root@c08136aaeebd:/home/katheroine# cat hello.txt
 Hello, Docker!
 ```
 
-## [Removing container](https://docs.docker.com/reference/cli/docker/container/rm)
+## [Removing a container](https://docs.docker.com/reference/cli/docker/container/rm)
 
 ```
 docker container rm [OPTIONS] CONTAINER [CONTAINER...]
@@ -1243,7 +1255,7 @@ CONTAINER ID   IMAGE                             COMMAND                   CREAT
 e3b2a7d02680   docker/welcome-to-docker:latest   "/docker-entrypoint.…"    10 hours ago   Exited (137) 25 seconds ago            ekierka_szpanerka
 ```
 
-## [Running (creating & starting) the container](https://docs.docker.com/reference/cli/docker/container/run)
+## [Running a container](https://docs.docker.com/reference/cli/docker/container/run)
 
 ```
 docker container run [OPTIONS] IMAGE [COMMAND] [ARG...]
