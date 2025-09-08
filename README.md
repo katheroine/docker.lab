@@ -14,6 +14,7 @@ Laboratory of Docker.
 4. Dockerfile
     1. [Introduction to the Dockerfile](basics/dockerfile_intro.md)
     2. [Format & syntax](basics/dockerfile_format_and_syntax.md)
+    3. [Instructions](basics/dockerfile_instructions.md)
 5. [Examples](examples/)
     1. [Hello World in PHP on Apache from prepared image](examples/hello-php/hello-php.md)
     2. [Hello World in PHP on Apache from scratch](examples/hello-php-and-apache/hello-php-and-apache.md)

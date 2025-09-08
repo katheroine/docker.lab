@@ -647,7 +647,7 @@ debian                     latest    047bd8d81940   4 weeks ago   120MB
 ## [Removing unused images](https://docs.docker.com/reference/cli/docker/image/prune)
 
 ```
-https://docs.docker.com/reference/cli/docker/image/prune
+docker image prune [OPTIONS]
 ```
 
 **Options**
