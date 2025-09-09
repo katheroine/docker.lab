@@ -1,6 +1,7 @@
 # Dockerfile instructions
 
 1. [`FROM`](#from)
+2. [`RUN`](#run)
 
 ## All Dockerfile instructions
 
@@ -96,4 +97,91 @@ $ docker build -t from-simple .
 $ docker images
 REPOSITORY    TAG       IMAGE ID       CREATED         SIZE
 from-simple   latest    9289c93df9f6   11 months ago   4.43MB
+```
+
+## [`RUN`](https://docs.docker.com/reference/dockerfile/#run)
+
+* **Shell form**
+
+```dockerfile
+RUN [OPTIONS] <command> ...
+```
+
+* **Exec form**
+
+```dockerfile
+RUN [OPTIONS] [ "<command>", ... ]
+```
+
+The `RUN` instruction will execute any commands *to create a new layer on top of the current image*. The added layer is used in the next step in the Dockerfile.
+
+The *shell form* is most commonly used, and lets you break up longer instructions into multiple lines, either using newline escapes, or with heredocs:
+
+The shell form is most commonly used, and lets you break up longer instructions into multiple lines, either using newline escapes, or with heredocs:
+
+```dockerfile
+RUN <<EOF
+apt-get update
+apt-get install -y curl
+EOF
+```
+
+**Options**
+
+| Option                                                                       | Description                                                            |
+|------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| [`--device`](https://docs.docker.com/reference/dockerfile/#run---device)     | allows build to request CDI devices to be available to the build step  |
+| [`--mount`](https://docs.docker.com/reference/dockerfile/#run---mount)       | allows you to create filesystem mounts that the build can access       |
+| [`--network`](https://docs.docker.com/reference/dockerfile/#run---network)   | allows control over which networking environment the command is run in |
+| [`--security`](https://docs.docker.com/reference/dockerfile/#run---security) | allows to run flows requiring elevated privileges (e.g. containerd)    |
+
+-- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#run)
+
+**Examples**
+
+* Simple layer
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/run-simple/Dockerfile)
+
+```dockerfile
+FROM ubuntu
+
+RUN apt update && apt -y install lynx
+
+```
+
+```console
+$ docker build -t run-simple .
+[+] Building 10.0s (7/7) FINISHED                                                                                                                                                                                                                                  docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
+ => => transferring dockerfile: 88B                                                                                                                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             9.9s
+ => [auth] library/ubuntu:pull token for registry-1.docker.io                                                                                                                                                                                                                0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => [1/2] FROM docker.io/library/ubuntu:latest@sha256:9cbed754112939e914291337b5e554b07ad7c392491dba6daf25eef1332a22e8                                                                                                                                                       0.0s
+ => CACHED [2/2] RUN apt update && apt -y install lynx                                                                                                                                                                                                                       0.0s
+ => exporting to image                                                                                                                                                                                                                                                       0.0s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:438339b0c3ab559d6aecd1afaedf1f4386ff561c2f235b4ec4575075bea141a0                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/run-simple
+ ```
+
+ ```console
+ $ docker images
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+run-simple   latest    438339b0c3ab   13 hours ago   194MB
+```
+
+Running container created from this image place us into the container context, and using the lynx package will be possible.
+
+```console
+$ docker run -it --name run-fast run-simple
+root@2ed3cd9c1484:/# lynx https://katheroine.github.io/docker.lab/
+root@2ed3cd9c1484:/#
 ```
