@@ -1,3 +1,3 @@
 FROM ubuntu
 
-RUN apt update && apt -y install lynx
+RUN apt update && apt install -y lynx
