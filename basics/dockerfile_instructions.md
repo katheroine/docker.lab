@@ -29,7 +29,7 @@ The Dockerfile supports the following instructions:
 
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#overview)
 
-## `FROM`
+## [`FROM`](https://docs.docker.com/reference/dockerfile/#from)
 
 ```dockerfile
 FROM [--platform=<platform>] <image> [AS <name>]
@@ -75,49 +75,6 @@ REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```dockerfile
 FROM busybox
 
-```
-
-When we don't set define image name in the Dockerfile with the `FROM` instruction and use `docker build` command without `-t` option allowing setting name and optionnally a tag, the tag nor name won't be set for the creating image.
-
-```console
-$ docker build .
-[+] Building 11.5s (6/6) FINISHED                                                                                                                                                                                                                                  docker:default
- => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
- => => transferring dockerfile: 50B                                                                                                                                                                                                                                          0.0s
- => [internal] load metadata for docker.io/library/busybox:latest                                                                                                                                                                                                            9.8s
- => [auth] library/busybox:pull token for registry-1.docker.io                                                                                                                                                                                                               0.0s
- => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
- => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
- => [1/1] FROM docker.io/library/busybox:latest@sha256:ab33eacc8251e3807b85bb6dba570e4698c3998eca6f0fc2ccb60575a563ea74                                                                                                                                                      1.5s
- => => resolve docker.io/library/busybox:latest@sha256:ab33eacc8251e3807b85bb6dba570e4698c3998eca6f0fc2ccb60575a563ea74                                                                                                                                                      0.0s
- => => sha256:ab33eacc8251e3807b85bb6dba570e4698c3998eca6f0fc2ccb60575a563ea74 9.53kB / 9.53kB                                                                                                                                                                               0.0s
- => => sha256:182014572d8981d8323fe9944876f63b39694e16ce08ae6296e97686c52b150c 610B / 610B                                                                                                                                                                                   0.0s
- => => sha256:0ed463b26daee791b094dc3fff25edb3e79f153d37d274e5c2936923c38dac2b 459B / 459B                                                                                                                                                                                   0.0s
- => => sha256:80bfbb8a41a2b27d93763e96f5bdccb8ca289387946e406e6f24053f6a8e8494 2.21MB / 2.21MB                                                                                                                                                                               1.1s
- => => extracting sha256:80bfbb8a41a2b27d93763e96f5bdccb8ca289387946e406e6f24053f6a8e8494                                                                                                                                                                                    0.2s
- => exporting to image                                                                                                                                                                                                                                                       0.0s
- => => exporting layers                                                                                                                                                                                                                                                      0.0s
- => => writing image sha256:9289c93df9f65e55ca1e5f9a56ac7c4fac1e7dd00f356bcc29b6bad93cc94311                                                                                                                                                                                 0.0s
-```
-
-```console
-$ docker images
-REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
-<none>       <none>    9289c93df9f6   11 months ago   4.43MB
-```
-
-Using `docker build` command with `-t` option allows to set the repository name for the image.
-
-```console
-$ docker image prune -a
-WARNING! This will remove all images without at least one container associated to them.
-Are you sure you want to continue? [y/N] y
-Deleted Images:
-deleted: sha256:9289c93df9f65e55ca1e5f9a56ac7c4fac1e7dd00f356bcc29b6bad93cc94311
-
-Total reclaimed space: 0B
-$ docker images
-REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
 ```console
