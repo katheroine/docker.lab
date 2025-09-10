@@ -3,6 +3,7 @@
 1. [`FROM`](#from)
 2. [`RUN`](#run)
 3. [`ADD`](#add)
+4. [`COPY`](#copy)
 
 ## All Dockerfile instructions
 
@@ -205,7 +206,7 @@ ADD [OPTIONS] <src> ... <dest>
 ADD [OPTIONS] ["<src>", ... "<dest>"]
 ```
 
-The `ADD` and `COPY` instructions are functionally similar, but serve slightly different purposes. Learn more about the differences between `ADD` and `COPY`.
+The `ADD` and `COPY` instructions are functionally similar, but serve slightly different purposes.
 
 **Options**
 
@@ -213,8 +214,8 @@ The `ADD` and `COPY` instructions are functionally similar, but serve slightly d
 |------------------------------------------------------------------------------------|---------------------------------------------------------------------|
 | [--keep-git-dir](https://docs.docker.com/reference/dockerfile/#add---keep-git-dir) | lets you preserve the `.git` directory                              |
 | [--checksum](https://docs.docker.com/reference/dockerfile/#add---checksum)         | lets you verify the checksum of a remote resource                   |
-| [--chown](https://docs.docker.com/reference/dockerfile/#add---chown---chmod)       | lets you define the permission bits using build arguments           |
-| [--chmod](https://docs.docker.com/reference/dockerfile/#add---chown---chmod)       | lets you define the permission bits using build arguments           |
+| [--chown](https://docs.docker.com/reference/dockerfile/#add---chown---chmod)       | lets you define the owner and groups                                |
+| [--chmod](https://docs.docker.com/reference/dockerfile/#add---chown---chmod)       | lets you define the permission bits                                 |
 | [--link](https://docs.docker.com/reference/dockerfile/#add---link)                 | lets you copy your source files into an empty destination directory |
 | [--exclude](https://docs.docker.com/reference/dockerfile/#add---exclude)           | lets you specify a path expression for files to be excluded         |
 
@@ -415,3 +416,116 @@ root@22c4cf7a459b:/# cat /home/me/file.txt
 This is the sample file purposed to be placed into the filesystem of the container.
 root@22c4cf7a459b:/#
 ```
+
+## [COPY](https://docs.docker.com/reference/dockerfile/#copy)
+
+The `COPY` instruction copies new files or directories from `<src>` and adds them to the filesystem of the image at the path `<dest>`. Files and directories can be copied from the build context, build stage, named context, or an image.
+
+COPY has two forms. The exec form is required for paths containing whitespace.
+
+* **Shell form**
+
+```dockerfile
+COPY [OPTIONS] <src> ... <dest>
+```
+
+* **Exec form**
+
+```dockerfile
+COPY [OPTIONS] ["<src>", ... "<dest>"]
+```
+
+The `ADD` and `COPY` instructions are functionally similar, but serve slightly different purposes.
+
+**Options**
+
+| Option                                                                        | Description                                                                  |
+|-------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| [--from](https://docs.docker.com/reference/dockerfile/#copy---from)           | lets you copy files from an image, a build stage, or a named context instead |
+| [--chown](https://docs.docker.com/reference/dockerfile/#copy---chown---chmod) | lets you define the owner and groups                                         |
+| [--chmod](https://docs.docker.com/reference/dockerfile/#copy---chown---chmod) | lets you define the permission bits                                          |
+| [--link](https://docs.docker.com/reference/dockerfile/#copy---link)           | lets you copy your source files into an empty destination directory          |
+| [--parents](https://docs.docker.com/reference/dockerfile/#copy---parents)     | preserves parent directories for `src` entries                               |
+| [--exclude](https://docs.docker.com/reference/dockerfile/#copy---exclude)     | lets you specify a path expression for files to be excluded                  |
+
+***Source***
+
+You can specify multiple source files or directories with `COPY`. The last argument must always be the destination. For example, to copy two files, `file1.txt` and `file2.txt`, from the build context to `/usr/src/things/` in the build container:
+
+```dockerfile
+COPY file1.txt file2.txt /usr/src/things/
+```
+
+If you specify multiple source files, either directly or using a wildcard, then the destination must be a directory (must end with a slash `/`).
+
+`COPY` accepts a flag `--from=<name>` that lets you specify the source location to be a build stage, context, or image. The following example copies files from a stage named `build`:
+
+```dockerfile
+FROM golang AS build
+WORKDIR /app
+RUN --mount=type=bind,target=. go build -o /myapp ./cmd
+
+COPY --from=build /myapp /usr/bin/
+```
+
+*Copying from the build context*
+
+When copying source files from the build context, paths are interpreted as relative to the root of the context.
+
+Specifying a source path with a leading slash or one that navigates outside the build context, such as `COPY ../something /something`, automatically removes any parent directory navigation (`../`). Trailing slashes in the source path are also disregarded, making `COPY something/ /something` equivalent to `COPY something /something`.
+
+If the source is a directory, the contents of the directory are copied, including filesystem metadata. The directory itself isn't copied, only its contents. If it contains subdirectories, these are also copied, and merged with any existing directories at the destination. Any conflicts are resolved in favor of the content being added, on a file-by-file basis, except if you're trying to copy a directory onto an existing file, in which case an error is raised.
+
+If the source is a file, the file and its metadata are copied to the destination. File permissions are preserved. If the source is a file and a directory with the same name exists at the destination, an error is raised.
+
+If you pass a Dockerfile through `stdin` to the build (`docker build - < Dockerfile`), there is no build context. In this case, you can only use the `COPY` instruction to copy files from other stages, named contexts, or images, using the `--from` flag. You can also pass a tar archive through `stdin`: (`docker build - < archive.tar`), the Dockerfile at the root of the archive and the rest of the archive will be used as the context of the build.
+
+When using a Git repository as the build context, the permissions bits for copied files are `644`. If a file in the repository has the executable bit set, it will have permissions set to `755`. Directories have permissions set to `755`.
+
+*Pattern matching*
+
+For local files, each `<src>` may contain wildcards and matching will be done using Go's `filepath.Match` rules.
+
+For example, to add all files and directories in the root of the build context ending with `.png`:
+
+```dockerfile
+COPY *.png /dest/
+```
+
+In the following example, `?` is a single-character wildcard, matching e.g. `index.js` and `index.ts`.
+
+```dockerfile
+COPY index.?s /dest/
+```
+
+When adding files or directories that contain special characters (such as `[` and `]`), you need to escape those paths following the Golang rules to prevent them from being treated as a matching pattern. For example, to add a file named `arr[0].txt`, use the following;
+
+```dockerfile
+COPY arr[[]0].txt /dest/
+```
+
+***Destination***
+
+If the destination path begins with a forward slash, it's interpreted as an absolute path, and the source files are copied into the specified destination relative to the root of the current build stage.
+
+```dockerfile
+# create /abs/test.txt
+COPY test.txt /abs/
+```
+
+Trailing slashes are significant. For example, `COPY test.txt /ab`s creates a file at `/abs`, whereas `COPY test.txt /abs/ creates /abs/test.txt`.
+
+If the destination path doesn't begin with a leading slash, it's interpreted as relative to the working directory of the build container.
+
+```dockerfile
+WORKDIR /usr/src/app
+# create /usr/src/app/rel/test.txt
+COPY test.txt rel/
+```
+
+If destination doesn't exist, it's created, along with all missing directories in its path.
+
+If the source is a file, and the destination doesn't end with a trailing slash, the source file will be written to the destination path as a file.
+
+-- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#copy)
+
