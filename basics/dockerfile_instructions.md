@@ -375,7 +375,7 @@ ADD file.txt /home/me/
 ```
 
 ```console
-$ docker build --no-cache -t add-simple .
+$ docker build -t add-simple .
 [+] Building 15.8s (8/8) FINISHED                                                                                                                                                                                                                                  docker:default
  => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
  => => transferring dockerfile: 73B                                                                                                                                                                                                                                          0.0s
@@ -529,3 +529,57 @@ If the source is a file, and the destination doesn't end with a trailing slash, 
 
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#copy)
 
+**Examples**
+
+* Simple file copying
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/copy-simple/Dockerfile)
+
+```dockerfile
+FROM debian
+
+COPY file.txt /home/me/
+
+```
+
+```console
+$ docker build -t copy-simple .
+[+] Building 2.5s (8/8) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.1s
+ => => transferring dockerfile: 74B                                                                                                                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/debian:latest                                                                                                                                                                                                             2.0s
+ => [auth] library/debian:pull token for registry-1.docker.io                                                                                                                                                                                                                0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => [internal] load build context                                                                                                                                                                                                                                            0.1s
+ => => transferring context: 119B                                                                                                                                                                                                                                            0.0s
+ => CACHED [1/2] FROM docker.io/library/debian:latest@sha256:833c135acfe9521d7a0035a296076f98c182c542a2b6b5a0fd7063d355d696be                                                                                                                                                0.0s
+ => [2/2] COPY file.txt /home/me/                                                                                                                                                                                                                                            0.1s
+ => exporting to image                                                                                                                                                                                                                                                       0.1s
+ => => exporting layers                                                                                                                                                                                                                                                      0.1s
+ => => writing image sha256:7896d7643d0f72c53f7f23ba0103f1d1ddddb0fa2cfdf1ebd4a03a4da733b4af                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/copy-simple
+ ```
+
+```console
+$ docker images
+REPOSITORY    TAG       IMAGE ID       CREATED         SIZE
+copy-simple   latest    7896d7643d0f   2 minutes ago   120MB
+```
+
+The destination directories from the path defined in the Dockerfie will be created if they don't exist.
+This is important to finish th destination directories path with the `/` sign to prevent from copying source file `file.txt` as a destination file with name `me` in the `/home` directory.
+
+```console
+$ docker run -it --name copy-single-file copy-simple
+root@45ffd981dd5a:/# ls /home/me/
+file.txt
+root@45ffd981dd5a:/# cat /home/me/file.txt
+This is the sample file purposed to be placed into the filesystem of the container.
+root@45ffd981dd5a:/#
+```

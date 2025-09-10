@@ -1,0 +1,1 @@
+This is the sample file purposed to be placed into the filesystem of the container.
