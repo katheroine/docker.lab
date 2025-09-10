@@ -33,6 +33,8 @@ The Dockerfile supports the following instructions:
 
 ## [`FROM`](https://docs.docker.com/reference/dockerfile/#from)
 
+The `FROM` instruction initializes a new build stage and sets the base image for subsequent instructions. As such, a valid Dockerfile must start with a `FROM` instruction. The image can be any valid image.
+
 ```dockerfile
 FROM [--platform=<platform>] <image> [AS <name>]
 ```
@@ -48,8 +50,6 @@ Or
 ```dockerfile
 FROM [--platform=<platform>] <image>[@<digest>] [AS <name>]
 ```
-
-The `FROM` instruction initializes a new build stage and sets the base image for subsequent instructions. As such, a valid Dockerfile must start with a `FROM` instruction. The image can be any valid image.
 
 `ARG` is the only instruction that may precede `FROM` in the Dockerfile.
 
@@ -102,6 +102,10 @@ from-simple   latest    9289c93df9f6   11 months ago   4.43MB
 
 ## [`RUN`](https://docs.docker.com/reference/dockerfile/#run)
 
+The `RUN` instruction will execute any commands *to create a new layer on top of the current image*. The added layer is used in the next step in the Dockerfile.
+
+RUN has two forms.
+
 * **Shell form**
 
 ```dockerfile
@@ -113,8 +117,6 @@ RUN [OPTIONS] <command> ...
 ```dockerfile
 RUN [OPTIONS] [ "<command>", ... ]
 ```
-
-The `RUN` instruction will execute any commands *to create a new layer on top of the current image*. The added layer is used in the next step in the Dockerfile.
 
 The *shell form* is most commonly used, and lets you break up longer instructions into multiple lines, either using newline escapes, or with heredocs:
 
@@ -187,6 +189,10 @@ root@2ed3cd9c1484:/#
 
 ## [ADD](https://docs.docker.com/reference/dockerfile/#add)
 
+The `ADD` instruction copies new files or directories from `<src>` and adds them to the filesystem of the image at the path `<dest>`. Files and directories can be copied from the build context, a remote URL, or a Git repository.
+
+ADD has two forms. The exec form is required for paths containing whitespace.
+
 * **Shell form**
 
 ```dockerfile
@@ -198,8 +204,6 @@ ADD [OPTIONS] <src> ... <dest>
 ```dockerfile
 ADD [OPTIONS] ["<src>", ... "<dest>"]
 ```
-
-The `ADD` instruction copies new files or directories from `<src>` and adds them to the filesystem of the image at the path `<dest>`. Files and directories can be copied from the build context, a remote URL, or a Git repository.
 
 The `ADD` and `COPY` instructions are functionally similar, but serve slightly different purposes. Learn more about the differences between `ADD` and `COPY`.
 
@@ -350,3 +354,64 @@ If destination doesn't exist, it's created, along with all missing directories i
 If the source is a file, and the destination doesn't end with a trailing slash, the source file will be written to the destination path as a file.
 
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#add)
+
+**Examples**
+
+* Simple file adding
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/add-simple/Dockerfile)
+
+```dockerfile
+FROM debian
+
+ADD file.txt /home/me/
+
+```
+
+```console
+$ docker build --no-cache -t add-simple .
+[+] Building 15.8s (8/8) FINISHED                                                                                                                                                                                                                                  docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
+ => => transferring dockerfile: 73B                                                                                                                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/debian:latest                                                                                                                                                                                                             1.8s
+ => [auth] library/debian:pull token for registry-1.docker.io                                                                                                                                                                                                                0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => [internal] load build context                                                                                                                                                                                                                                            0.1s
+ => => transferring context: 119B                                                                                                                                                                                                                                            0.0s
+ => [1/2] FROM docker.io/library/debian:latest@sha256:833c135acfe9521d7a0035a296076f98c182c542a2b6b5a0fd7063d355d696be                                                                                                                                                      13.2s
+ => => resolve docker.io/library/debian:latest@sha256:833c135acfe9521d7a0035a296076f98c182c542a2b6b5a0fd7063d355d696be                                                                                                                                                       0.0s
+ => => sha256:833c135acfe9521d7a0035a296076f98c182c542a2b6b5a0fd7063d355d696be 8.93kB / 8.93kB                                                                                                                                                                               0.0s
+ => => sha256:56b68c54f22562e5931513fabfc38a23670faf16bbe82f2641d8a2c836ea30fc 1.02kB / 1.02kB                                                                                                                                                                               0.0s
+ => => sha256:999ffdddc1528999603ade1613e0d336874d34448a74db8f981c6fae4db91ad7 451B / 451B                                                                                                                                                                                   0.0s
+ => => sha256:15b1d8a5ff03aeb0f14c8d39a60a73ef22f656550bfa1bb90d1850f25a0ac0fa 49.28MB / 49.28MB                                                                                                                                                                             5.2s
+ => => extracting sha256:15b1d8a5ff03aeb0f14c8d39a60a73ef22f656550bfa1bb90d1850f25a0ac0fa                                                                                                                                                                                    7.5s
+ => [2/2] ADD file.txt /home/me/                                                                                                                                                                                                                                             0.6s
+ => exporting to image                                                                                                                                                                                                                                                       0.1s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:800c41c2c1ad7de7722992b9fff24b758016a53947f85ff5945a7b2925551b6d                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/add-simple
+```
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
+add-simple   latest    800c41c2c1ad   2 minutes ago   120MB
+```
+
+The destination directories from the path defined in the Dockerfie will be created if they don't exist.
+This is important to finish th destination directories path with the `/` sign to prevent from copying source file `file.txt` as a destination file with name `me` in the `/home` directory.
+
+```console
+$ docker run -it --name add-single-file add-simple
+root@22c4cf7a459b:/# ls /home/me/
+file.txt
+root@22c4cf7a459b:/# cat /home/me/file.txt
+This is the sample file purposed to be placed into the filesystem of the container.
+root@22c4cf7a459b:/#
+```
