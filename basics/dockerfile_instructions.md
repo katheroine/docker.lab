@@ -4,6 +4,7 @@
 2. [`RUN`](#run)
 3. [`ADD`](#add)
 4. [`COPY`](#copy)
+5. [`WORKDIR`](#workdir)
 
 ## All Dockerfile instructions
 
@@ -583,3 +584,40 @@ root@45ffd981dd5a:/# cat /home/me/file.txt
 This is the sample file purposed to be placed into the filesystem of the container.
 root@45ffd981dd5a:/#
 ```
+
+## [`WORKDIR`](https://docs.docker.com/reference/dockerfile/#workdir)
+
+The `WORKDIR` instruction sets the working directory for any `RUN`, `CMD`, `ENTRYPOINT`, `COPY` and `ADD` instructions that follow it in the Dockerfile.
+
+```dockerfile
+WORKDIR /path/to/workdir
+```
+
+If the WORKDIR doesn't exist, it will be created even if it's not used in any subsequent Dockerfile instruction.
+
+The `WORKDIR` instruction can be used multiple times in a Dockerfile. If a relative path is provided, it will be relative to the path of the previous `WORKDIR` instruction. For example:
+
+```dockerfile
+WORKDIR /a
+WORKDIR b
+WORKDIR c
+RUN pwd
+```
+
+The output of the final pwd command in this Dockerfile would be `/a/b/c`.
+
+The `WORKDIR` instruction can resolve environment variables previously set using `ENV`. You can only use environment variables explicitly set in the Dockerfile. For example:
+
+```dockerfile
+ENV DIRPATH=/path
+WORKDIR $DIRPATH/$DIRNAME
+RUN pwd
+```
+
+The output of the final pwd command in this Dockerfile would be `/path/$DIRNAME`
+
+If not specified, the default working directory is `/`. In practice, if you aren't building a Dockerfile from scratch (`FROM scratch`), the `WORKDIR` may likely be set by the base image you're using.
+
+Therefore, to avoid unintended operations in unknown directories, it's best practice to set your WORKDIR explicitly.
+
+-- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#workdir)
