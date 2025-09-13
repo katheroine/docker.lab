@@ -621,3 +621,51 @@ If not specified, the default working directory is `/`. In practice, if you aren
 Therefore, to avoid unintended operations in unknown directories, it's best practice to set your WORKDIR explicitly.
 
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#workdir)
+
+**Examples**
+
+* Simple workdir path change
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/workdir-simple/Dockerfile)
+
+```dockerfile
+FROM ubuntu
+
+WORKDIR /home/here/we/are/
+
+```
+
+```console
+$ docker build -t workdir-simple .
+[+] Building 2.4s (7/7) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.1s
+ => => transferring dockerfile: 77B                                                                                                                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             1.9s
+ => [auth] library/ubuntu:pull token for registry-1.docker.io                                                                                                                                                                                                                0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => CACHED [1/2] FROM docker.io/library/ubuntu:latest@sha256:9cbed754112939e914291337b5e554b07ad7c392491dba6daf25eef1332a22e8                                                                                                                                                0.0s
+ => [2/2] WORKDIR /home/here/we/are/                                                                                                                                                                                                                                         0.1s
+ => exporting to image                                                                                                                                                                                                                                                       0.1s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:bac1ffc926acdff44ea78784732aa365b6fb0cf2effa0ad980fec1c3a40af164                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/workdir-simple
+ ```
+
+```console
+$ docker images
+REPOSITORY       TAG       IMAGE ID       CREATED          SIZE
+workdir-simple   latest    bac1ffc926ac   47 seconds ago   78.1MB
+```
+
+```console
+$ docker run -it --name workdir-simple-path workdir-simple
+root@1bb0404573f2:/home/here/we/are# pwd
+/home/here/we/are
+root@1bb0404573f2:/home/here/we/are#
+```
