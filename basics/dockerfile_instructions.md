@@ -656,7 +656,7 @@ $ docker build -t workdir-simple .
  => => exporting layers                                                                                                                                                                                                                                                      0.0s
  => => writing image sha256:bac1ffc926acdff44ea78784732aa365b6fb0cf2effa0ad980fec1c3a40af164                                                                                                                                                                                 0.0s
  => => naming to docker.io/library/workdir-simple
- ```
+```
 
 ```console
 $ docker images
@@ -903,3 +903,51 @@ RUN echo $CONT_IMG_VER
 Line 3 doesn't cause a cache miss because the value of `CONT_IMG_VER` is a constant (`hello`). As a result, the environment variables and values used on the RUN (line 4) doesn't change between builds.
 
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#arg)
+
+**Examples**
+
+* Simple argument use
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/arg-simple/Dockerfile)
+
+```dockerfile
+FROM alpine
+
+ARG NICKNAME
+RUN echo "Hello, $NICKNAME!"
+WORKDIR /home/${NICKNAME}
+
+```
+
+```console
+$ docker build -t arg-simple --build-arg NICKNAME=katheroine .
+[+] Building 2.8s (7/7) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
+ => => transferring dockerfile: 118B                                                                                                                                                                                                                                         0.0s
+ => [internal] load metadata for docker.io/library/alpine:latest                                                                                                                                                                                                             1.7s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => CACHED [1/3] FROM docker.io/library/alpine:latest@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1                                                                                                                                                0.0s
+ => [2/3] RUN echo "Hello, katheroine!"                                                                                                                                                                                                                                      0.6s
+ => [3/3] WORKDIR /home/katheroine                                                                                                                                                                                                                                           0.1s
+ => exporting to image                                                                                                                                                                                                                                                       0.2s
+ => => exporting layers                                                                                                                                                                                                                                                      0.1s
+ => => writing image sha256:e91483afc724d058961cfa8150a5bef2b18e75964bc6a302b24ea3ea67fb9df3                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/arg-simple
+```
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
+arg-simple   latest    e91483afc724   33 seconds ago   8.31MB
+```
+
+```console
+$ docker run -it --name arg-simple-argument arg-simple
+/home/katheroine #
+```
