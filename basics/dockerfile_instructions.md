@@ -5,6 +5,7 @@
 3. [`ADD`](#add)
 4. [`COPY`](#copy)
 5. [`WORKDIR`](#workdir)
+6. [`ARG`](#arg)
 
 ## All Dockerfile instructions
 
@@ -669,3 +670,236 @@ root@1bb0404573f2:/home/here/we/are# pwd
 /home/here/we/are
 root@1bb0404573f2:/home/here/we/are#
 ```
+
+## [ARG](https://docs.docker.com/reference/dockerfile/#arg)
+
+
+```dockerfile
+ARG <name>[=<default value>] [<name>[=<default value>]...]
+```
+
+The `ARG` instruction defines a variable that users can pass at build-time to the builder with the docker build command using the `--build-arg <varname>=<value>` flag.
+
+*It isn't recommended to use build arguments for passing secrets such as user credentials, API tokens, etc.* Build arguments are visible in the docker history command and in max mode provenance attestations, which are attached to the image by default if you use the Buildx GitHub Actions and your GitHub repository is public.
+
+Refer to the `RUN --mount=type=secret` section to learn about secure ways to use secrets when building images.
+
+A Dockerfile may include one or more `ARG` instructions. For example, the following is a valid Dockerfile:
+
+```dockerfile
+FROM busybox
+ARG user1
+ARG buildno
+# ...
+```
+
+***Default values***
+
+An `ARG` instruction can optionally include a default value:
+
+```dockerfile
+FROM busybox
+ARG user1=someuser
+ARG buildno=1
+# ...
+```
+
+If an `ARG `instruction has a default value and if there is no value passed at build-time, the builder uses the default.
+
+***Scope***
+
+An `ARG` variable comes into effect from the line on which it is declared in the Dockerfile. For example, consider this Dockerfile:
+
+```dockerfile
+FROM busybox
+USER ${username:-some_user}
+ARG username
+USER $username
+# ...
+```
+
+A user builds this file by calling:
+
+```
+docker build --build-arg username=what_user .
+```
+
+The `USER` instruction on line 2 evaluates to the `some_user` fallback, because the `username` variable is not yet declared.
+The `username` variable is declared on line 3, and available for reference in Dockerfile instruction from that point onwards.
+The `USER` instruction on line 4 evaluates to `what_user`, since at that point the `username` argument has a value of `what_user` which was passed on the command line. Prior to its definition by an `ARG` instruction, any use of a variable results in an empty string.
+
+An `ARG` variable declared within a build stage is automatically inherited by other stages based on that stage. Unrelated build stages do not have access to the variable. To use an argument in multiple distinct stages, each stage must include the `ARG` instruction, or they must both be based on a shared base stage in the same Dockerfile where the variable is declared.
+
+***Using ARG variables***
+
+You can use an `ARG` or an `ENV` instruction to specify variables that are available to the `RUN` instruction. *Environment variables defined using the `ENV` instruction always override an `ARG` instruction of the same name.* Consider this Dockerfile with an `ENV` and `ARG` instruction.
+
+```dockerfile
+FROM ubuntu
+ARG CONT_IMG_VER
+ENV CONT_IMG_VER=v1.0.0
+RUN echo $CONT_IMG_VER
+```
+
+Then, assume this image is built with this command:
+
+```
+docker build --build-arg CONT_IMG_VER=v2.0.1 .
+```
+
+In this case, the `RUN` instruction uses `v1.0.0` instead of the `ARG` setting passed by the `user:v2.0.1` This behavior is similar to a shell script where a locally scoped variable overrides the variables passed as arguments or inherited from environment, from its point of definition.
+
+Using the example above but a different `ENV` specification you can create more useful interactions between `ARG` and `ENV` instructions:
+
+```dockerfile
+FROM ubuntu
+ARG CONT_IMG_VER
+ENV CONT_IMG_VER=${CONT_IMG_VER:-v1.0.0}
+RUN echo $CONT_IMG_VER
+```
+
+*Unlike an `ARG` instruction, ENV values are always persisted in the built image.* Consider a `docker build` without the `--build-arg` flag:
+
+```
+docker build .
+```
+
+Using this Dockerfile example, `CONT_IMG_VER` is still persisted in the image but its value would be `v1.0.0` as it is the default set in line 3 by the `ENV` instruction.
+
+The variable expansion technique in this example allows you to pass arguments from the command line and persist them in the final image by leveraging the `ENV` instruction. Variable expansion is only supported for a limited set of Dockerfile instructions.
+
+***Predefined ARGs***
+
+Docker has a set of predefined `ARG` variables that you can use without a corresponding `ARG` instruction in the Dockerfile.
+
+* `HTTP_PROXY`/`http_proxy`
+* `HTTPS_PROXY`/`https_proxy`
+* `FTP_PROXY`/`ftp_proxy`
+* `NO_PROXY`/`no_proxy`
+* `ALL_PROXY`/`all_proxy`
+
+To use these, pass them on the command line using the `--build-arg` flag, for example:
+
+```
+docker build --build-arg HTTPS_PROXY=https://my-proxy.example.com .
+```
+
+*By default, these pre-defined variables are excluded from the output of docker history.* Excluding them reduces the risk of accidentally leaking sensitive authentication information in an `HTTP_PROXY` variable.
+
+For example, consider building the following Dockerfile using `--build-arg HTTP_PROXY=http://user:pass@proxy.lon.example.com`
+
+```dockerfile
+FROM ubuntu
+RUN echo "Hello World"
+```
+
+In this case, the value of the `HTTP_PROXY` variable is not available in the docker history and is not cached. If you were to change location, and your proxy server changed to `http://user:pass@proxy.sfo.example.com`, a subsequent build does not result in a cache miss.
+
+If you need to override this behaviour then you may do so by adding an `ARG` statement in the Dockerfile as follows:
+
+```dockerfile
+FROM ubuntu
+ARG HTTP_PROXY
+RUN echo "Hello World"
+```
+
+When building this Dockerfile, the `HTTP_PROXY` is preserved in the docker history, and changing its value invalidates the build cache.
+
+***Automatic platform ARGs in the global scope***
+
+This feature is only available when using the BuildKit backend.
+
+BuildKit supports a predefined set of `ARG` variables with information on the platform of the node performing the build (*build platform*) and on the platform of the resulting image (*target platform*). The *target platform* can be specified with the `--platform` flag on `docker build`.
+
+The following ARG variables are set automatically:
+
+* **`TARGETPLATFORM`** - platform of the build result. Eg `linux/amd64`, `linux/arm/v7`, `windows/amd64`.
+* **`TARGETOS`** - OS component of `TARGETPLATFORM`
+* **`TARGETARCH`** - architecture component of `TARGETPLATFORM`
+* **`TARGETVARIANT`** - variant component of `TARGETPLATFORM`
+* **`BUILDPLATFORM`** - platform of the node performing the build.
+* **`BUILDOS`** - OS component of `BUILDPLATFORM`
+* **`BUILDARCH`** - architecture component of `BUILDPLATFORM`
+* **`BUILDVARIANT`** - variant component of `BUILDPLATFORM`
+
+These arguments are defined in the global scope so are not automatically available inside build stages or for your `RUN` commands. To expose one of these arguments inside the build stage redefine it without value.
+
+For example:
+
+```dockerfile
+FROM alpine
+ARG TARGETPLATFORM
+RUN echo "I'm building for $TARGETPLATFORM"
+```
+
+***BuildKit built-in build args***
+
+| Arg                            | Type   | Description                                                                                                                            |
+|--------------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------|
+| BUILDKIT_CACHE_MOUNT_NS        | String | Set optional cache ID namespace.                                                                                                       |
+| BUILDKIT_CONTEXT_KEEP_GIT_DIR  | Bool   | Trigger Git context to keep the `.git` directory.                                                                                      |
+| BUILDKIT_HISTORY_PROVENANCE_V1 | Bool   | Enable SLSA Provenance v1 for build history record.                                                                                    |
+| BUILDKIT_INLINE_CACHE2         | Bool   | Inline cache metadata to image config or not.                                                                                          |
+| BUILDKIT_MULTI_PLATFORM        | Bool   | Opt into deterministic output regardless of multi-platform output or not.                                                              |
+| BUILDKIT_SANDBOX_HOSTNAME      | String | Set the hostname (default `buildkitsandbox`)                                                                                           |
+| BUILDKIT_SYNTAX                | String | Set frontend image                                                                                                                     |
+| SOURCE_DATE_EPOCH              | Int    | Set the Unix timestamp for created image and layers. More info from reproducible builds. Supported since Dockerfile 1.5, BuildKit 0.11 |
+
+**Example: keep `.git` dir**
+When using a Git context, `.git` dir is not kept on checkouts. It can be useful to keep it around if you want to retrieve git information during your build:
+
+```dockerfile
+# syntax=docker/dockerfile:1
+FROM alpine
+WORKDIR /src
+RUN --mount=target=. \
+  make REVISION=$(git rev-parse HEAD) build
+```
+
+```
+docker build --build-arg BUILDKIT_CONTEXT_KEEP_GIT_DIR=1 https://github.com/user/repo.git#main
+```
+
+***Impact on build caching***
+
+`ARG` variables are not persisted into the built image as `ENV` variables are. However, `ARG` variables do impact the build cache in similar ways. If a Dockerfile defines an `ARG` variable whose value is different from a previous build, then a "cache miss" occurs upon its first usage, not its definition. In particular, all `RUN` instructions following an `ARG` instruction use the `ARG` variable implicitly (as an *environment variable*), thus can cause a cache miss. All predefined `ARG` variables are exempt from caching unless there is a matching `ARG` statement in the Dockerfile.
+
+For example, consider these two Dockerfile:
+
+```dockerfile
+FROM ubuntu
+ARG CONT_IMG_VER
+RUN echo $CONT_IMG_VER
+```
+
+```dockerfile
+FROM ubuntu
+ARG CONT_IMG_VER
+RUN echo hello
+```
+
+If you specify `--build-arg CONT_IMG_VER=<value>` on the command line, in both cases, the specification on line 2 doesn't cause a cache miss; line 3 does cause a cache miss. `ARG CONT_IMG_VER` causes the `RUN` line to be identified as the same as running `CONT_IMG_VER=<value> echo hello`, so if the `<value>` changes, you get a cache miss.
+
+Consider another example under the same command line:
+
+```dockerfile
+FROM ubuntu
+ARG CONT_IMG_VER
+ENV CONT_IMG_VER=$CONT_IMG_VER
+RUN echo $CONT_IMG_VER
+```
+
+In this example, the cache miss occurs on line 3. The miss happens because the variable's value in the `ENV` references the `ARG` variable and that variable is changed through the command line. In this example, the `ENV` command causes the image to include the value.
+
+If an `ENV` instruction overrides an `ARG` instruction of the same name, like this Dockerfile:
+
+```dockerfile
+FROM ubuntu
+ARG CONT_IMG_VER
+ENV CONT_IMG_VER=hello
+RUN echo $CONT_IMG_VER
+```
+
+Line 3 doesn't cause a cache miss because the value of `CONT_IMG_VER` is a constant (`hello`). As a result, the environment variables and values used on the RUN (line 4) doesn't change between builds.
+
+-- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#arg)
