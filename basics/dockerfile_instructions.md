@@ -638,7 +638,6 @@ REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 
 ```dockerfile
 FROM ubuntu
-
 WORKDIR /home/here/we/are/
 
 ```
@@ -706,6 +705,45 @@ Keep the following things in mind about volumes in the Dockerfile.
 * **The host directory is declared at container run-time**: The host directory (the mountpoint) is, by its nature, host-dependent. This is to preserve image portability, since a given host directory can't be guaranteed to be available on all hosts. For this reason, you can't mount a host directory from within the Dockerfile. The VOLUME instruction does not support specifying a host-dir parameter. You must specify the mountpoint when you create or run the container.
 
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#volume)
+
+**Examples**
+
+* Simple directory creation
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/volume-simple/Dockerfile)
+
+```dockerfile
+FROM ubuntu
+VOLUME /some_directory
+
+```
+
+```console
+$ docker build -t volume-simple .
+
+```
+
+```console
+$ docker images
+REPOSITORY      TAG       IMAGE ID       CREATED       SIZE
+volume-simple   latest    8f7058b4357e   3 weeks ago   78.1MB
+```
+
+```console
+$ docker run -it --name volume-simple-directory volume-simple
+root@d575e3ff2078:/# ls
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  some_directory  srv  sys  tmp  usr  var
+root@d575e3ff2078:/# cd some_directory/
+root@d575e3ff2078:/some_directory# pwd
+/some_directory
+root@d575e3ff2078:/some_directory#
+```
+
 
 ## [ARG](https://docs.docker.com/reference/dockerfile/#arg)
 
