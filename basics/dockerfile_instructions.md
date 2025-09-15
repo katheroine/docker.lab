@@ -5,8 +5,9 @@
 3. [`ADD`](#add)
 4. [`COPY`](#copy)
 5. [`WORKDIR`](#workdir)
-6. [`ARG`](#arg)
-7. [`ENV`](#env)
+6. [`VOLUME`](#volume)
+7. [`ARG`](#arg)
+8. [`ENV`](#env)
 
 ## All Dockerfile instructions
 
@@ -671,6 +672,40 @@ root@1bb0404573f2:/home/here/we/are# pwd
 /home/here/we/are
 root@1bb0404573f2:/home/here/we/are#
 ```
+
+## [`VOLUME`](https://docs.docker.com/reference/dockerfile/#volume)
+
+The `VOLUME` instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers.
+
+```dockerfile
+VOLUME ["/data"]
+```
+
+The `VOLUME` instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers. The value can be a JSON array, `VOLUME ["/var/log/"]`, or a plain string with multiple arguments, such as `VOLUME /var/log` or `VOLUME /var/log /var/db`.
+
+The `docker run` command initializes the newly created volume with any data that exists at the specified location within the base image. For example, consider the following Dockerfile snippet:
+
+```dockerfile
+FROM ubuntu
+RUN mkdir /myvol
+RUN echo "hello world" > /myvol/greeting
+VOLUME /myvol
+```
+
+This Dockerfile results in an image that causes `docker run` to create a new mount point at `/myvol` and copy the greeting file into the newly created volume.
+
+***Notes about specifying volumes***
+
+Keep the following things in mind about volumes in the Dockerfile.
+
+* **Volumes on Windows-based containers**: When using Windows-based containers, the destination of a volume inside the container must be one of:
+    * a non-existing or empty directory
+    * a drive other than C:
+* **Changing the volume from within the Dockerfile**: If any build steps change the data within the volume after it has been declared, those changes will be discarded when using the legacy builder. When using Buildkit, the changes will instead be kept.
+* **JSON formatting**: The list is parsed as a JSON array. You must enclose words with double quotes (`"`) rather than single quotes (`'`).
+* **The host directory is declared at container run-time**: The host directory (the mountpoint) is, by its nature, host-dependent. This is to preserve image portability, since a given host directory can't be guaranteed to be available on all hosts. For this reason, you can't mount a host directory from within the Dockerfile. The VOLUME instruction does not support specifying a host-dir parameter. You must specify the mountpoint when you create or run the container.
+
+-- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#volume)
 
 ## [ARG](https://docs.docker.com/reference/dockerfile/#arg)
 
