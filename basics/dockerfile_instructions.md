@@ -726,7 +726,17 @@ VOLUME /some_directory
 
 ```console
 $ docker build -t volume-simple .
-
+[+] Building 1.1s (5/5) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.1s
+ => => transferring dockerfile: 71B                                                                                                                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             0.9s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => CACHED [1/1] FROM docker.io/library/ubuntu:latest@sha256:9cbed754112939e914291337b5e554b07ad7c392491dba6daf25eef1332a22e8                                                                                                                                                0.0s
+ => exporting to image                                                                                                                                                                                                                                                       0.0s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:8f7058b4357e0d39939cbb3d3f0b63d75ef29bec89a73460ee9d8e33c57905af                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/volume-simple
 ```
 
 ```console
@@ -776,6 +786,52 @@ USER patrick
 ```
 
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#user)
+
+**Examples**
+
+* Simple default user change
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/user-simple/Dockerfile)
+
+```dockerfile
+FROM debian
+USER www-data
+
+```
+
+```console
+$ docker build -t user-simple .
+[+] Building 3.2s (6/6) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
+ => => transferring dockerfile: 63B                                                                                                                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/debian:latest                                                                                                                                                                                                             3.1s
+ => [auth] library/debian:pull token for registry-1.docker.io                                                                                                                                                                                                                0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => CACHED [1/1] FROM docker.io/library/debian:latest@sha256:833c135acfe9521d7a0035a296076f98c182c542a2b6b5a0fd7063d355d696be                                                                                                                                                0.0s
+ => exporting to image                                                                                                                                                                                                                                                       0.0s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:397456ba6cd229611e0ef0f10c7f616e6c5e3ac06d320a595f93b7addb00bcd4                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/user-simple
+```
+
+```console
+$ docker images
+REPOSITORY    TAG       IMAGE ID       CREATED      SIZE
+user-simple   latest    af1a2210bcc9   7 days ago   120MB
+```
+
+```console
+$ docker run -it --name user-simple-change user-simple
+www-data@5c4093270ba6:/$ whoami
+www-data
+www-data@5c4093270ba6:/$
+```
 
 ## [`ARG`](https://docs.docker.com/reference/dockerfile/#arg)
 
