@@ -6,6 +6,7 @@
 4. [`COPY`](#copy)
 5. [`WORKDIR`](#workdir)
 6. [`ARG`](#arg)
+7. [`ENV`](#env)
 
 ## All Dockerfile instructions
 
@@ -673,12 +674,11 @@ root@1bb0404573f2:/home/here/we/are#
 
 ## [ARG](https://docs.docker.com/reference/dockerfile/#arg)
 
+The `ARG` instruction defines a variable that users can pass at build-time to the builder with the docker build command using the `--build-arg <varname>=<value>` flag.
 
 ```dockerfile
 ARG <name>[=<default value>] [<name>[=<default value>]...]
 ```
-
-The `ARG` instruction defines a variable that users can pass at build-time to the builder with the docker build command using the `--build-arg <varname>=<value>` flag.
 
 *It isn't recommended to use build arguments for passing secrets such as user credentials, API tokens, etc.* Build arguments are visible in the docker history command and in max mode provenance attestations, which are attached to the image by default if you use the Buildx GitHub Actions and your GitHub repository is public.
 
@@ -917,7 +917,6 @@ REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 
 ```dockerfile
 FROM alpine
-
 ARG NICKNAME
 RUN echo "Hello, $NICKNAME!"
 WORKDIR /home/${NICKNAME}
@@ -951,3 +950,65 @@ arg-simple   latest    e91483afc724   33 seconds ago   8.31MB
 $ docker run -it --name arg-simple-argument arg-simple
 /home/katheroine #
 ```
+
+## [`ENV`](https://docs.docker.com/reference/dockerfile/#env)
+
+The `ENV` instruction sets the *environment variable* `<key>` to the value `<value>`.
+
+```dockerfile
+ENV <key>=<value> [<key>=<value>...]
+```
+
+This value will be in the environment for all subsequent instructions in the build stage and can be replaced inline in many as well. The value will be interpreted for other environment variables, so quote characters will be removed if they are not escaped. Like command line parsing, quotes and backslashes can be used to include spaces within values.
+
+Example:
+
+```docker
+ENV MY_NAME="John Doe"
+ENV MY_DOG=Rex\ The\ Dog
+ENV MY_CAT=fluffy
+```
+
+The `ENV` instruction allows for multiple `<key>=<value> ...` variables to be set at one time, and the example below will yield the same net results in the final image:
+
+```dockerfile
+ENV MY_NAME="John Doe" MY_DOG=Rex\ The\ Dog \
+    MY_CAT=fluffy
+```
+
+The environment variables set using `ENV` will persist when a container is run from the resulting image. You can view the values using `docker inspect`, and change them using `docker run --env <key>=<value>`.
+
+A stage inherits any environment variables that were set using `ENV` by its parent stage or any ancestor. Refer to the multi-stage builds section in the manual for more information.
+
+Environment variable persistence can cause unexpected side effects. For example, setting `ENV DEBIAN_FRONTEND=noninteractive` changes the behavior of `apt-get`, and may confuse users of your image.
+
+If an environment variable is only needed during build, and not in the final image, consider setting a value for a single command instead:
+
+```dockerfile
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y ...
+```
+
+Or using `ARG`, which is not persisted in the final image:
+
+```dockerfile
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y ...
+```
+
+***Alternative syntax***
+
+The `ENV` instruction also allows an alternative syntax `ENV <key> <value>`, omitting the `=`. For example:
+
+```dockerfile
+ENV MY_VAR my-value
+```
+
+This syntax does not allow for multiple environment-variables to be set in a single `ENV` instruction, and can be confusing. For example, the following sets a single environment variable (`ONE`) with value `"TWO= THREE=world"`:
+
+```dockerfile
+ENV ONE TWO= THREE=world
+```
+
+The alternative syntax is supported for backward compatibility, but discouraged for the reasons outlined above, and may be removed in a future release.
+
+-- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#env)

@@ -1,5 +1,4 @@
 FROM alpine
-
 ARG NICKNAME
 RUN echo "Hello, $NICKNAME!"
 WORKDIR /home/${NICKNAME}
