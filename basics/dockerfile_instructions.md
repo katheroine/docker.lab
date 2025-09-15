@@ -1012,3 +1012,53 @@ ENV ONE TWO= THREE=world
 The alternative syntax is supported for backward compatibility, but discouraged for the reasons outlined above, and may be removed in a future release.
 
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#env)
+
+**Examples**
+
+* Simple environment variable set
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/env-simple/Dockerfile)
+
+```dockerfile
+FROM ubuntu
+ENV MY_ENV="Hi, there!"
+RUN echo ${MY_ENV}
+CMD echo ${MY_ENV}
+
+```
+
+```console
+$ docker build -t env-simple .
+[+] Building 6.3s (7/7) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
+ => => transferring dockerfile: 111B                                                                                                                                                                                                                                         0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             5.0s
+ => [auth] library/ubuntu:pull token for registry-1.docker.io                                                                                                                                                                                                                0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => CACHED [1/2] FROM docker.io/library/ubuntu:latest@sha256:9cbed754112939e914291337b5e554b07ad7c392491dba6daf25eef1332a22e8                                                                                                                                                0.0s
+ => [2/2] RUN echo Hi, there!                                                                                                                                                                                                                                                0.9s
+ => exporting to image                                                                                                                                                                                                                                                       0.1s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:bdff3f30aac8d39e668e0dedfd22af318f1e9926101752ea81e2cf043baa336d                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/env-simple                                                                                                                                                                                                                                0.0s
+
+ 1 warning found (use docker --debug to expand):
+ - JSONArgsRecommended: JSON arguments recommended for CMD to prevent unintended behavior related to OS signals (line 4)
+```
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID       CREATED              SIZE
+env-simple   latest    bdff3f30aac8   About a minute ago   78.1MB
+```
+
+```console
+$ docker run -it --name env-simple-ev env-simple
+Hi, there!
+```
