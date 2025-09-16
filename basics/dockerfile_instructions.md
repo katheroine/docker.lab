@@ -1370,3 +1370,50 @@ If `CMD` is used to provide default arguments for the `ENTRYPOINT` instruction, 
 Don't confuse `RUN` with `CMD`. `RUN` actually runs a command and commits the result; `CMD` doesn't execute anything at build time, but specifies the intended command for the image.
 
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#cmd)
+
+**Example**
+
+* Simple command
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/cmd-simple/Dockerfile)
+
+```dockerfile
+FROM alpine
+CMD echo "Hi, there!"
+
+```
+
+```console
+$ docker build -t cmd-simple .
+[+] Building 5.2s (6/6) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
+ => => transferring dockerfile: 71B                                                                                                                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/alpine:latest                                                                                                                                                                                                             5.0s
+ => [auth] library/alpine:pull token for registry-1.docker.io                                                                                                                                                                                                                0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => CACHED [1/1] FROM docker.io/library/alpine:latest@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1                                                                                                                                                0.0s
+ => exporting to image                                                                                                                                                                                                                                                       0.0s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:f1daa63c546e0d214608b5fd0f1acae9a1917ad700f1200a0d0020fdbfa65cba                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/cmd-simple                                                                                                                                                                                                                                0.0s
+
+ 1 warning found (use docker --debug to expand):
+ - JSONArgsRecommended: JSON arguments recommended for CMD to prevent unintended behavior related to OS signals (line 2)
+```
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+cmd-simple   latest    f1daa63c546e   2 months ago   8.31MB
+```
+
+```console
+$ docker run -i --name cmd-simple-text cmd-simple
+Hi, there!
+```
