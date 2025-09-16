@@ -10,6 +10,7 @@
 8. [`EXPOSE`](#expose)
 9. [`ARG`](#arg)
 10. [`ENV`](#env)
+11. [`CMD`](#cmd)
 
 ## All Dockerfile instructions
 
@@ -1333,3 +1334,39 @@ env-simple   latest    bdff3f30aac8   About a minute ago   78.1MB
 $ docker run -it --name env-simple-ev env-simple
 Hi, there!
 ```
+
+## [`CMD`](https://docs.docker.com/reference/dockerfile/#cmd)
+
+The `CMD` instruction sets the command to be executed when running a container from an image.
+
+You can specify CMD instructions using shell or exec forms:
+
+* **Exec form**
+
+```dockerfile
+CMD ["executable","param1","param2"]
+```
+
+* **Fxec form, as default parameters to `ENTRYPOINT`**
+
+```dockerfile
+CMD ["param1","param2"]
+```
+
+* **Shell form**
+
+```dockerfile
+CMD command param1 param2
+```
+
+*There can only be one `CMD` instruction in a Dockerfile.* If you list more than one `CMD`, only the last one takes effect.
+
+The purpose of a `CMD` is to provide defaults for an executing container. These defaults can include an executable, or they can omit the executable, in which case you must specify an `ENTRYPOINT` instruction as well.
+
+If you would like your container to run the same executable every time, then you should consider using `ENTRYPOINT` in combination with `CMD`. If the user specifies arguments to `docker run` then they will override the default specified in `CMD`, but still use the default `ENTRYPOINT`.
+
+If `CMD` is used to provide default arguments for the `ENTRYPOINT` instruction, both the `CMD` and `ENTRYPOINT` instructions should be specified in the exec form.
+
+Don't confuse `RUN` with `CMD`. `RUN` actually runs a command and commits the result; `CMD` doesn't execute anything at build time, but specifies the intended command for the image.
+
+-- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#cmd)
