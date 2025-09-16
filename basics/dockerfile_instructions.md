@@ -111,7 +111,7 @@ from-simple   latest    9289c93df9f6   11 months ago   4.43MB
 
 The `RUN` instruction will execute any commands *to create a new layer on top of the current image*. The added layer is used in the next step in the Dockerfile.
 
-RUN has two forms.
+`RUN` has two forms.
 
 * **Shell form**
 
@@ -883,16 +883,12 @@ REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```dockerfile
 FROM ubuntu
 
-RUN apt update && apt upgrade -y \
-&& apt install -y apache2
-RUN mkdir -p /var/www/hello/public \
-&& chmod -R 755 /var/www
-
 COPY site.conf /etc/apache2/sites-available/
 COPY index.html /var/www/hello/public/
 
-RUN a2dissite 000-default.conf
-RUN a2ensite site.conf
+RUN apt update && apt upgrade -y \
+&& apt install -y apache2 \
+&& a2dissite 000-default.conf && a2ensite site.conf
 
 EXPOSE 80
 
@@ -902,28 +898,23 @@ CMD apachectl -D FOREGROUND
 
 ```console
 $ docker build -t expose-simple .
-[+] Building 0.9s (12/12) FINISHED                                                                                                                                                                                                                                 docker:default
+[+] Building 106.4s (10/10) FINISHED                                                                                                                                                                                                                               docker:default
  => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
- => => transferring dockerfile: 355B                                                                                                                                                                                                                                         0.0s
- => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             0.7s
+ => => transferring dockerfile: 292B                                                                                                                                                                                                                                         0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             4.7s
+ => [auth] library/ubuntu:pull token for registry-1.docker.io                                                                                                                                                                                                                0.0s
  => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
  => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
- => [1/7] FROM docker.io/library/ubuntu:latest@sha256:590e57acc18d58cd25d00254d4ca989bbfcd7d929ca6b521892c9c904c391f50                                                                                                                                                       0.0s
+ => CACHED [1/4] FROM docker.io/library/ubuntu:latest@sha256:590e57acc18d58cd25d00254d4ca989bbfcd7d929ca6b521892c9c904c391f50                                                                                                                                                0.0s
  => [internal] load build context                                                                                                                                                                                                                                            0.0s
  => => transferring context: 60B                                                                                                                                                                                                                                             0.0s
- => CACHED [2/7] RUN apt update && apt upgrade -y && apt install -y apache2                                                                                                                                                                                                  0.0s
- => CACHED [3/7] RUN mkdir -p /var/www/hello/public && chmod -R 755 /var/www                                                                                                                                                                                                 0.0s
- => CACHED [4/7] COPY site.conf /etc/apache2/sites-available/                                                                                                                                                                                                                0.0s
- => CACHED [5/7] COPY index.html /var/www/hello/public/                                                                                                                                                                                                                      0.0s
- => CACHED [6/7] RUN a2dissite 000-default.conf                                                                                                                                                                                                                              0.0s
- => CACHED [7/7] RUN a2ensite site.conf                                                                                                                                                                                                                                      0.0s
- => exporting to image                                                                                                                                                                                                                                                       0.0s
- => => exporting layers                                                                                                                                                                                                                                                      0.0s
- => => writing image sha256:7b34736713ae37cabb28f4dcaf48ba441c4a17593611b26f269984d33cf887e9                                                                                                                                                                                 0.0s
+ => [2/4] COPY site.conf /etc/apache2/sites-available/                                                                                                                                                                                                                       0.1s
+ => [3/4] COPY index.html /var/www/hello/public/                                                                                                                                                                                                                             0.1s
+ => [4/4] RUN apt update && apt upgrade -y && apt install -y apache2 && a2dissite 000-default.conf && a2ensite site.conf                                                                                                                                                    93.0s
+ => exporting to image                                                                                                                                                                                                                                                       8.2s
+ => => exporting layers                                                                                                                                                                                                                                                      8.1s
+ => => writing image sha256:d559ec4f4fccb8e2218c7968922861c64ad127062427ed479bc1bff97eef6033                                                                                                                                                                                 0.0s
  => => naming to docker.io/library/expose-simple                                                                                                                                                                                                                             0.0s
-
- 1 warning found (use docker --debug to expand):
- - JSONArgsRecommended: JSON arguments recommended for CMD to prevent unintended behavior related to OS signals (line 16)
 ```
 
 ```console
