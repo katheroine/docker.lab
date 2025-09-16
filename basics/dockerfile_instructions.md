@@ -4,11 +4,12 @@
 2. [`RUN`](#run)
 3. [`ADD`](#add)
 4. [`COPY`](#copy)
-5. [`WORKDIR`](#workdir)
-6. [`VOLUME`](#volume)
+5. [`VOLUME`](#volume)
+6. [`WORKDIR`](#workdir)
 7. [`USER`](#user)
-8. [`ARG`](#arg)
-9. [`ENV`](#env)
+8. [`EXPOSE`](#expose)
+9. [`ARG`](#arg)
+10. [`ENV`](#env)
 
 ## All Dockerfile instructions
 
@@ -589,6 +590,88 @@ This is the sample file purposed to be placed into the filesystem of the contain
 root@45ffd981dd5a:/#
 ```
 
+## [`VOLUME`](https://docs.docker.com/reference/dockerfile/#volume)
+
+The `VOLUME` instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers.
+
+```dockerfile
+VOLUME ["/data"]
+```
+
+The `VOLUME` instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers. The value can be a JSON array, `VOLUME ["/var/log/"]`, or a plain string with multiple arguments, such as `VOLUME /var/log` or `VOLUME /var/log /var/db`.
+
+The `docker run` command initializes the newly created volume with any data that exists at the specified location within the base image. For example, consider the following Dockerfile snippet:
+
+```dockerfile
+FROM ubuntu
+RUN mkdir /myvol
+RUN echo "hello world" > /myvol/greeting
+VOLUME /myvol
+```
+
+This Dockerfile results in an image that causes `docker run` to create a new mount point at `/myvol` and copy the greeting file into the newly created volume.
+
+***Notes about specifying volumes***
+
+Keep the following things in mind about volumes in the Dockerfile.
+
+* **Volumes on Windows-based containers**: When using Windows-based containers, the destination of a volume inside the container must be one of:
+    * a non-existing or empty directory
+    * a drive other than C:
+* **Changing the volume from within the Dockerfile**: If any build steps change the data within the volume after it has been declared, those changes will be discarded when using the legacy builder. When using Buildkit, the changes will instead be kept.
+* **JSON formatting**: The list is parsed as a JSON array. You must enclose words with double quotes (`"`) rather than single quotes (`'`).
+* **The host directory is declared at container run-time**: The host directory (the mountpoint) is, by its nature, host-dependent. This is to preserve image portability, since a given host directory can't be guaranteed to be available on all hosts. For this reason, you can't mount a host directory from within the Dockerfile. The VOLUME instruction does not support specifying a host-dir parameter. You must specify the mountpoint when you create or run the container.
+
+-- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#volume)
+
+**Examples**
+
+* Simple directory creation
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/volume-simple/Dockerfile)
+
+```dockerfile
+FROM ubuntu
+VOLUME /some_directory
+
+```
+
+```console
+$ docker build -t volume-simple .
+[+] Building 1.1s (5/5) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.1s
+ => => transferring dockerfile: 71B                                                                                                                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             0.9s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => CACHED [1/1] FROM docker.io/library/ubuntu:latest@sha256:9cbed754112939e914291337b5e554b07ad7c392491dba6daf25eef1332a22e8                                                                                                                                                0.0s
+ => exporting to image                                                                                                                                                                                                                                                       0.0s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:8f7058b4357e0d39939cbb3d3f0b63d75ef29bec89a73460ee9d8e33c57905af                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/volume-simple
+```
+
+```console
+$ docker images
+REPOSITORY      TAG       IMAGE ID       CREATED       SIZE
+volume-simple   latest    8f7058b4357e   3 weeks ago   78.1MB
+```
+
+```console
+$ docker run -it --name volume-simple-directory volume-simple
+root@d575e3ff2078:/# ls
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  some_directory  srv  sys  tmp  usr  var
+root@d575e3ff2078:/# cd some_directory/
+root@d575e3ff2078:/some_directory# pwd
+/some_directory
+root@d575e3ff2078:/some_directory#
+```
+
 ## [`WORKDIR`](https://docs.docker.com/reference/dockerfile/#workdir)
 
 The `WORKDIR` instruction sets the working directory for any `RUN`, `CMD`, `ENTRYPOINT`, `COPY` and `ADD` instructions that follow it in the Dockerfile.
@@ -673,88 +756,6 @@ root@1bb0404573f2:/home/here/we/are# pwd
 root@1bb0404573f2:/home/here/we/are#
 ```
 
-## [`VOLUME`](https://docs.docker.com/reference/dockerfile/#volume)
-
-The `VOLUME` instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers.
-
-```dockerfile
-VOLUME ["/data"]
-```
-
-The `VOLUME` instruction creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers. The value can be a JSON array, `VOLUME ["/var/log/"]`, or a plain string with multiple arguments, such as `VOLUME /var/log` or `VOLUME /var/log /var/db`.
-
-The `docker run` command initializes the newly created volume with any data that exists at the specified location within the base image. For example, consider the following Dockerfile snippet:
-
-```dockerfile
-FROM ubuntu
-RUN mkdir /myvol
-RUN echo "hello world" > /myvol/greeting
-VOLUME /myvol
-```
-
-This Dockerfile results in an image that causes `docker run` to create a new mount point at `/myvol` and copy the greeting file into the newly created volume.
-
-***Notes about specifying volumes***
-
-Keep the following things in mind about volumes in the Dockerfile.
-
-* **Volumes on Windows-based containers**: When using Windows-based containers, the destination of a volume inside the container must be one of:
-    * a non-existing or empty directory
-    * a drive other than C:
-* **Changing the volume from within the Dockerfile**: If any build steps change the data within the volume after it has been declared, those changes will be discarded when using the legacy builder. When using Buildkit, the changes will instead be kept.
-* **JSON formatting**: The list is parsed as a JSON array. You must enclose words with double quotes (`"`) rather than single quotes (`'`).
-* **The host directory is declared at container run-time**: The host directory (the mountpoint) is, by its nature, host-dependent. This is to preserve image portability, since a given host directory can't be guaranteed to be available on all hosts. For this reason, you can't mount a host directory from within the Dockerfile. The VOLUME instruction does not support specifying a host-dir parameter. You must specify the mountpoint when you create or run the container.
-
--- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#volume)
-
-**Examples**
-
-* Simple directory creation
-
-```console
-$ docker images
-REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
-```
-
-[*Dockerfile*](../instructions.examples/volume-simple/Dockerfile)
-
-```dockerfile
-FROM ubuntu
-VOLUME /some_directory
-
-```
-
-```console
-$ docker build -t volume-simple .
-[+] Building 1.1s (5/5) FINISHED                                                                                                                                                                                                                                   docker:default
- => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.1s
- => => transferring dockerfile: 71B                                                                                                                                                                                                                                          0.0s
- => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             0.9s
- => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
- => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
- => CACHED [1/1] FROM docker.io/library/ubuntu:latest@sha256:9cbed754112939e914291337b5e554b07ad7c392491dba6daf25eef1332a22e8                                                                                                                                                0.0s
- => exporting to image                                                                                                                                                                                                                                                       0.0s
- => => exporting layers                                                                                                                                                                                                                                                      0.0s
- => => writing image sha256:8f7058b4357e0d39939cbb3d3f0b63d75ef29bec89a73460ee9d8e33c57905af                                                                                                                                                                                 0.0s
- => => naming to docker.io/library/volume-simple
-```
-
-```console
-$ docker images
-REPOSITORY      TAG       IMAGE ID       CREATED       SIZE
-volume-simple   latest    8f7058b4357e   3 weeks ago   78.1MB
-```
-
-```console
-$ docker run -it --name volume-simple-directory volume-simple
-root@d575e3ff2078:/# ls
-bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  some_directory  srv  sys  tmp  usr  var
-root@d575e3ff2078:/# cd some_directory/
-root@d575e3ff2078:/some_directory# pwd
-/some_directory
-root@d575e3ff2078:/some_directory#
-```
-
 ## [`USER`](https://docs.docker.com/reference/dockerfile/#user)
 
 The `USER` instruction sets the *user name* (or `UID`) and optionally the *user group* (or `GID`) to use as the default user and group for the remainder of the current stage.
@@ -832,6 +833,43 @@ www-data@5c4093270ba6:/$ whoami
 www-data
 www-data@5c4093270ba6:/$
 ```
+
+## [`EXPOSE`](https://docs.docker.com/reference/dockerfile/#expose)
+
+The `EXPOSE` instruction informs Docker that the container listens on the specified network ports at runtime.
+
+```dockerfile
+EXPOSE <port> [<port>/<protocol>...]
+```
+
+You can specify whether the port listens on TCP or UDP, and the default is TCP if you don't specify a protocol.
+
+*The `EXPOSE` instruction doesn't actually publish the port. It functions as a type of documentation* between the person who builds the image and the person who runs the container, about which ports are intended to be published. To publish the port when running the container, use the `-p` flag on docker run to publish and map one or more ports, or the `-P` flag to publish all exposed ports and map them to high-order ports.
+
+By default, `EXPOSE` assumes TCP. You can also specify UDP:
+
+```dockerfile
+EXPOSE 80/udp
+```
+
+To expose on both TCP and UDP, include two lines:
+
+```dockerfile
+EXPOSE 80/tcp
+EXPOSE 80/udp
+```
+
+In this case, if you use `-P` with docker run, the port will be exposed once for TCP and once for UDP. Remember that `-P` uses an ephemeral high-ordered host port on the host, so TCP and UDP doesn't use the same port.
+
+Regardless of the `EXPOSE` settings, you can override them at runtime by using the `-p` flag. For example
+
+```dockerfile
+docker run -p 80:80/tcp -p 80:80/udp ...
+```
+
+To set up port redirection on the host system, see using the `-P` flag. The `docker network` command supports creating networks for communication among containers without the need to expose or publish specific ports, because the containers connected to the network can communicate with each other over any port. For detailed information, see the overview of this feature.
+
+-- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#expose)
 
 ## [`ARG`](https://docs.docker.com/reference/dockerfile/#arg)
 
