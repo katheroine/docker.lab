@@ -869,6 +869,87 @@ docker run -p 80:80/tcp -p 80:80/udp ...
 
 To set up port redirection on the host system, see using the `-P` flag. The `docker network` command supports creating networks for communication among containers without the need to expose or publish specific ports, because the containers connected to the network can communicate with each other over any port. For detailed information, see the overview of this feature.
 
+**Examples**
+
+* Simple port redirection
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/expose-simple/Dockerfile)
+
+```dockerfile
+FROM ubuntu
+
+RUN apt update && apt upgrade -y \
+&& apt install -y apache2
+RUN mkdir -p /var/www/hello/public \
+&& chmod -R 755 /var/www
+
+COPY site.conf /etc/apache2/sites-available/
+COPY index.html /var/www/hello/public/
+
+RUN a2dissite 000-default.conf
+RUN a2ensite site.conf
+
+EXPOSE 80
+
+CMD apachectl -D FOREGROUND
+
+```
+
+```console
+$ docker build -t expose-simple .
+[+] Building 0.9s (12/12) FINISHED                                                                                                                                                                                                                                 docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
+ => => transferring dockerfile: 355B                                                                                                                                                                                                                                         0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             0.7s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => [1/7] FROM docker.io/library/ubuntu:latest@sha256:590e57acc18d58cd25d00254d4ca989bbfcd7d929ca6b521892c9c904c391f50                                                                                                                                                       0.0s
+ => [internal] load build context                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 60B                                                                                                                                                                                                                                             0.0s
+ => CACHED [2/7] RUN apt update && apt upgrade -y && apt install -y apache2                                                                                                                                                                                                  0.0s
+ => CACHED [3/7] RUN mkdir -p /var/www/hello/public && chmod -R 755 /var/www                                                                                                                                                                                                 0.0s
+ => CACHED [4/7] COPY site.conf /etc/apache2/sites-available/                                                                                                                                                                                                                0.0s
+ => CACHED [5/7] COPY index.html /var/www/hello/public/                                                                                                                                                                                                                      0.0s
+ => CACHED [6/7] RUN a2dissite 000-default.conf                                                                                                                                                                                                                              0.0s
+ => CACHED [7/7] RUN a2ensite site.conf                                                                                                                                                                                                                                      0.0s
+ => exporting to image                                                                                                                                                                                                                                                       0.0s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:7b34736713ae37cabb28f4dcaf48ba441c4a17593611b26f269984d33cf887e9                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/expose-simple                                                                                                                                                                                                                             0.0s
+
+ 1 warning found (use docker --debug to expand):
+ - JSONArgsRecommended: JSON arguments recommended for CMD to prevent unintended behavior related to OS signals (line 16)
+```
+
+```console
+$ docker images
+REPOSITORY      TAG       IMAGE ID       CREATED          SIZE
+expose-simple   latest    7b34736713ae   45 seconds ago   239MB
+```
+
+```console
+$ docker run -d -p 8080:80/tcp --name expose-simple-tcp expose-simple
+```
+
+*`/etc/hosts` on the host*
+
+```
+127.0.0.1       hello.local
+```
+
+Running lynx browser on the host machine should show the simple page with `Hello, there!` text.
+
+```console
+$ lynx http://hello.local:8080
+```
+
+The same effect should be available with the address `http://localhost:8080`.
+
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#expose)
 
 ## [`ARG`](https://docs.docker.com/reference/dockerfile/#arg)
