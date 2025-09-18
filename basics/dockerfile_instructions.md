@@ -1664,3 +1664,100 @@ The table below shows what command is executed for different `ENTRYPOINT` / `CMD
 If CMD is defined from the base image, setting ENTRYPOINT will reset CMD to an empty value. In this scenario, CMD must be defined in the current image to have a value.
 
 -- [Docker Documentation](https://docs.docker.com/reference/dockerfile/#entrypoint)
+
+
+**Examples**
+
+* Simple command
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/entrypoint-simple/Dockerfile)
+
+```dockerfile
+FROM ubuntu
+ENTRYPOINT date +"%d.%m.%Y (%a) %H:%M:%S"
+
+```
+
+```console
+$ docker build -t entrypoint-simple .
+[+] Building 3.6s (6/6) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.1s
+ => => transferring dockerfile: 91B                                                                                                                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             3.3s
+ => [auth] library/ubuntu:pull token for registry-1.docker.io                                                                                                                                                                                                                0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => CACHED [1/1] FROM docker.io/library/ubuntu:latest@sha256:353675e2a41babd526e2b837d7ec780c2a05bca0164f7ea5dbbd433d21d166fc                                                                                                                                                0.0s
+ => => resolve docker.io/library/ubuntu:latest@sha256:353675e2a41babd526e2b837d7ec780c2a05bca0164f7ea5dbbd433d21d166fc                                                                                                                                                       0.0s
+ => exporting to image                                                                                                                                                                                                                                                       0.0s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:151357f5025f533e6fc564cedf04f505daa464fab6777e8ff15f0c350d7b407c                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/entrypoint-simple                                                                                                                                                                                                                         0.0s
+
+ 1 warning found (use docker --debug to expand):
+ - JSONArgsRecommended: JSON arguments recommended for ENTRYPOINT to prevent unintended behavior related to OS signals (line 2)
+```
+
+```console
+$ docker images
+REPOSITORY          TAG       IMAGE ID       CREATED      SIZE
+entrypoint-simple   latest    151357f5025f   8 days ago   78.1MB
+```
+
+```console
+$ docker run -i --rm --name entrypoint-simple-date entrypoint-simple
+18.09.2025 (Thu) 13:49:25
+```
+
+* Command with interchangeable argument
+
+```console
+$ docker images
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+```
+
+[*Dockerfile*](../instructions.examples/entrypoint-interchangeable-argument/Dockerfile)
+
+```dockerfile
+FROM ubuntu
+ENTRYPOINT ["date"]
+CMD ["+%d.%m.%Y (%a) %H:%M:%S"]
+
+```
+
+```console
+$ docker build -t entrypoint-interchangeable-argument .
+[+] Building 0.9s (5/5) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
+ => => transferring dockerfile: 101B                                                                                                                                                                                                                                         0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             0.7s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+ => CACHED [1/1] FROM docker.io/library/ubuntu:latest@sha256:353675e2a41babd526e2b837d7ec780c2a05bca0164f7ea5dbbd433d21d166fc                                                                                                                                                0.0s
+ => => resolve docker.io/library/ubuntu:latest@sha256:353675e2a41babd526e2b837d7ec780c2a05bca0164f7ea5dbbd433d21d166fc                                                                                                                                                       0.0s
+ => exporting to image                                                                                                                                                                                                                                                       0.0s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:983c267dd2a516bea4e83d51c2641a42747fdba9585382d2fb43b889f1e6251a                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/entrypoint-interchangeable-argument                                                                                                                                                                                                       0.0s
+```
+
+```console
+$ docker images
+REPOSITORY                            TAG       IMAGE ID       CREATED      SIZE
+entrypoint-interchangeable-argument   latest    80d49bfafe51   8 days ago   78.1MB
+```
+
+```console
+$ docker run -i --rm --name entrypoint-interchangeable-date-format entrypoint-interchangeable-argument
+18.09.2025 (Thu) 15:46:04
+```
+
+```console
+$ docker run -i --rm --name entrypoint-interchangeable-date-format entrypoint-interchangeable-argument +%d.%m.%Y
+18.09.2025
+```
