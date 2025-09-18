@@ -81,7 +81,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/from-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/from-simple/Dockerfile)
 
 ```dockerfile
 FROM busybox
@@ -158,11 +158,10 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/run-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/run-simple/Dockerfile)
 
 ```dockerfile
 FROM ubuntu
-
 RUN apt update && apt -y install lynx
 
 ```
@@ -373,7 +372,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/add-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/add-simple/Dockerfile)
 
 ```dockerfile
 FROM debian
@@ -546,7 +545,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/copy-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/copy-simple/Dockerfile)
 
 ```dockerfile
 FROM debian
@@ -635,7 +634,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/volume-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/volume-simple/Dockerfile)
 
 ```dockerfile
 FROM ubuntu
@@ -720,7 +719,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/workdir-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/workdir-simple/Dockerfile)
 
 ```dockerfile
 FROM ubuntu
@@ -799,7 +798,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/user-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/user-simple/Dockerfile)
 
 ```dockerfile
 FROM debian
@@ -880,7 +879,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/expose-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/expose-simple/Dockerfile)
 
 ```dockerfile
 FROM ubuntu
@@ -1186,7 +1185,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/arg-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/arg-simple/Dockerfile)
 
 ```dockerfile
 FROM alpine
@@ -1295,7 +1294,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/env-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/env-simple/Dockerfile)
 
 ```dockerfile
 FROM ubuntu
@@ -1381,7 +1380,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/cmd-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/cmd-simple/Dockerfile)
 
 ```dockerfile
 FROM alpine
@@ -1675,7 +1674,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/entrypoint-simple/Dockerfile)
+[*Dockerfile*](../example/instructions/entrypoint-simple/Dockerfile)
 
 ```dockerfile
 FROM ubuntu
@@ -1721,7 +1720,7 @@ $ docker images
 REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
 ```
 
-[*Dockerfile*](../instructions.examples/entrypoint-interchangeable-argument/Dockerfile)
+[*Dockerfile*](../example/instructions/entrypoint-interchangeable-argument/Dockerfile)
 
 ```dockerfile
 FROM ubuntu

@@ -4,20 +4,20 @@ Laboratory of Docker.
 
 ## Index
 
-1. [Containerization](basics/containerization.md)
-2. [Docker](basics/docker.md)
+1. [Containerization](doc/containerization.md)
+2. [Docker](doc/docker.md)
 3. CLI
-    1. [Introduction to the Docker CLI](basics/cli_intro.md)
-    2. [Managing images](basics/cli_images.md)
-    3. [Managing containers](basics/cli_containers.md)
-    4. [CLI with Docker Desktop](basics/cli_and_docker_desktop.md)
+    1. [Introduction to the Docker CLI](doc/cli_intro.md)
+    2. [Managing images](doc/cli_images.md)
+    3. [Managing containers](doc/cli_containers.md)
+    4. [CLI with Docker Desktop](doc/cli_and_docker_desktop.md)
 4. Dockerfile
-    1. [Introduction to the Dockerfile](basics/dockerfile_intro.md)
-    2. [Format & syntax](basics/dockerfile_format_and_syntax.md)
-    3. [Instructions](basics/dockerfile_instructions.md)
-5. [Examples](examples/)
-    1. [Hello World in PHP on Apache from prepared image](examples/hello-php/hello-php.md)
-    2. [Hello World in PHP on Apache from scratch](examples/hello-php-and-apache/hello-php-and-apache.md)
-    3. Hello World in PHP on Apache with MySQL from scratch - two containers & network
-        1. [Two containers & network](examples/hello-php-and-mysql/network/hello-php-and-mysql.md)
-        2. [Multicontainer](examples/hello-php-and-mysql/compose/hello-php-and-mysql.md)
+    1. [Introduction to the Dockerfile](doc/dockerfile_intro.md)
+    2. [Format & syntax](doc/dockerfile_format_and_syntax.md)
+    3. [Instructions](doc/dockerfile_instructions.md)
+5. Examples
+    1. [Hello World in PHP on Apache from prepared image](example/hello-php/hello-php.md)
+    2. [Hello World in PHP on Apache from scratch](example/hello-php-and-apache/hello-php-and-apache.md)
+    3. Hello World in PHP on Apache with MySQL from scratch - two containers
+        1. [Two containers & network](example/hello-php-and-mysql/network/hello-php-and-mysql.md)
+        2. [Multicontainer](example/hello-php-and-mysql/compose/hello-php-and-mysql.md)
