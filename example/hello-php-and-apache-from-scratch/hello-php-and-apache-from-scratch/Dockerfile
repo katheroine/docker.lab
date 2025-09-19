@@ -9,10 +9,10 @@ RUN apt -y install libapache2-mod-fcgid
 RUN a2enmod proxy_fcgi
 RUN a2enconf php8.2-fpm
 
-RUN mkdir -p /var/www/hello-php-and-apache/public
+RUN mkdir -p /var/www/hello-php-and-apache-from-scratch/public
 RUN chmod -R 755 /var/www
 COPY site.conf /etc/apache2/sites-available/
-COPY index.php /var/www/hello-php-and-apache/public
+COPY index.php /var/www/hello-php-and-apache-from-scratch/public
 
 RUN a2dissite 000-default.conf
 RUN a2ensite site.conf
