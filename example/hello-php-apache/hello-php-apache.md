@@ -1,15 +1,15 @@
-# Example application: Hello World web application in PHP on Apache
+# Example: Hello World web application in PHP on Apache
 
 ## Creating Dockerfile
 
 [**Dockerfile**](Dockerfile)
 
 ```dockerfile
-# Use the official PHP 8.3 image as the base
+# Use the official PHP image as the base
 FROM php:8.3-apache
 
 # Copy the application files to the container
-COPY . /var/www/html
+COPY index.php /var/www/html/
 
 # Expose HTTP port
 EXPOSE 80
@@ -22,7 +22,7 @@ EXPOSE 80
 
 ```html
 <h1>Hello, world!</h1>
-<p>This is Docker example application in PHP <? echo phpversion() ?>.</p>
+<p>This is Docker example application in PHP <? echo phpversion() ?> on Apache.</p>
 
 ```
 
@@ -115,7 +115,7 @@ CONTAINER ID   IMAGE              COMMAND                  CREATED             S
 c47c43dea513   hello-php-apache   "docker-php-entrypoi…"   About an hour ago   Up About an hour   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   hello-world-in-php-on-apache
 ```
 
-![Example application in browser](hello-world-in-php-on-apache_-_browser.png "Example application in browser")
+![Example application in browser](hello-php-apache_-_browser.png "Example application in browser")
 
 ## Tagging image
 
