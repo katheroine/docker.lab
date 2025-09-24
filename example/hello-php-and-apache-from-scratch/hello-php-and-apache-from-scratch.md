@@ -2,97 +2,117 @@
 
 ## Creating Dockerfile
 
-**Dockerfile**
+[**Dockerfile**](Dockerfile)
 
 ```dockerfile
-FROM ubuntu:23.10
+FROM ubuntu:latest
 
-RUN apt -y update
-RUN apt -y upgrade
-RUN apt -y install apache2
-RUN apt -y install php
+RUN apt update && apt upgrade -y \
+    && apt install -y php8.3-fpm apache2 libapache2-mod-fcgid \
+    && a2enmod proxy_fcgi && a2enconf php8.3-fpm
 
-RUN mkdir -p /var/www/hello-php-and-apache-from-scratch/public
-RUN chmod -R 755 /var/www
 COPY site.conf /etc/apache2/sites-available/
-COPY index.php /var/www/hello-php-and-apache-from-scratch/public
+COPY index.php /var/www/hello-php-apache-from-scratch/public/
 
-RUN a2dissite 000-default.conf
-RUN a2ensite site.conf
+RUN a2dissite 000-default.conf && a2ensite site.conf
 
 EXPOSE 80
 
-CMD ["apachectl", "-D", "FOREGROUND"]
+CMD service php8.3-fpm start && apachectl -D FOREGROUND
 
 ```
 
 ## Preparing PHP application sample
 
-**index.php**
+[**index.php**](index.php)
 
 ```html
 <h1>Hello, world!</h1>
-<p>This is Docker example application in PHP <? echo phpversion() ?> on Apache.</p>
+<p>This is Docker example application in PHP <?php echo phpversion(); ?> on Apache from scratch.</p>
 
+```
+
+[**site.conf**](site.conf)
+
+```apache
+<VirtualHost *:80>
+    ServerName hello-php-apache-from-scratch.local
+    DocumentRoot /var/www/hello-php-apache-from-scratch/public
+
+    <Directory "/var/www/hello-php-apache-from-scratch/public">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    <FilesMatch \.php$>
+        <If "-f %{REQUEST_FILENAME}">
+            SetHandler "proxy:unix:/var/run/php/php8.3-fpm.sock|fcgi://localhost"
+        </If>
+    </FilesMatch>
+</VirtualHost>
 ```
 
 ## Building image
 
-`docker build -t hello-php-and-apache-from-scratch .`
+`docker build -t hello-php-apache-from-scratch .`
 
 * `build` - building a container
 * `-t` tags an image with a name
-* `hello-php-and-apache-from-scratch` - image name
+* `hello-php-apache-from-scratch` - image name
 * `.` - lets Docker know where it can find the Dockerfile
 
-```bash
-$ docker build -t hello-php-and-apache-from-scratch .
-[+] Building 4.4s (17/17) FINISHED                                                                                                                                                                                                                           docker:desktop-linux
+```console
+$ docker build -t hello-php-apache-from-scratch .
+[+] Building 142.1s (11/11) FINISHED                                                                                                                                                                                                                               docker:default
  => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
- => => transferring dockerfile: 423B                                                                                                                                                                                                                                         0.0s
- => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
- => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
- => [internal] load metadata for docker.io/library/ubuntu:23.10                                                                                                                                                                                                              2.5s
+ => => transferring dockerfile: 437B                                                                                                                                                                                                                                         0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                            18.4s
  => [auth] library/ubuntu:pull token for registry-1.docker.io                                                                                                                                                                                                                0.0s
- => [ 1/11] FROM docker.io/library/ubuntu:23.10@sha256:5cd569b792a8b7b483d90942381cd7e0b03f0a15520d6e23fb7a1464a25a71b1                                                                                                                                                      0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 51B                                                                                                                                                                                                                                             0.0s
+ => CACHED [1/5] FROM docker.io/library/ubuntu:latest@sha256:353675e2a41babd526e2b837d7ec780c2a05bca0164f7ea5dbbd433d21d166fc                                                                                                                                                0.0s
+ => => resolve docker.io/library/ubuntu:latest@sha256:353675e2a41babd526e2b837d7ec780c2a05bca0164f7ea5dbbd433d21d166fc                                                                                                                                                       0.0s
  => [internal] load build context                                                                                                                                                                                                                                            0.0s
- => => transferring context: 172B                                                                                                                                                                                                                                            0.0s
- => CACHED [ 2/11] RUN apt -y update                                                                                                                                                                                                                                         0.0s
- => CACHED [ 3/11] RUN apt -y upgrade                                                                                                                                                                                                                                        0.0s
- => CACHED [ 4/11] RUN apt -y install apache2                                                                                                                                                                                                                                0.0s
- => CACHED [ 5/11] RUN apt -y install php                                                                                                                                                                                                                                    0.0s
- => CACHED [ 6/11] RUN mkdir -p /var/www/hello-php-and-apache-from-scratch/public                                                                                                                                                                                                         0.0s
- => CACHED [ 7/11] RUN chmod -R 755 /var/www                                                                                                                                                                                                                                 0.0s
- => CACHED [ 8/11] COPY site.conf /etc/apache2/sites-available/                                                                                                                                                                                                              0.0s
- => [ 9/11] COPY index.php /var/www/hello-php-and-apache-from-scratch/public                                                                                                                                                                                                              0.2s
- => [10/11] RUN a2dissite 000-default.conf                                                                                                                                                                                                                                   0.6s
- => [11/11] RUN a2ensite site.conf                                                                                                                                                                                                                                           0.5s
- => exporting to image                                                                                                                                                                                                                                                       0.3s
- => => exporting layers                                                                                                                                                                                                                                                      0.2s
- => => writing image sha256:354309cdb7aeefd2dd2f912d1d9d09b68ec95437605c99f3f53b4dcff965ea5a                                                                                                                                                                                 0.0s
- => => naming to docker.io/library/hello-php-and-apache-from-scratch                                                                                                                                                                                                                      0.0s
+ => => transferring context: 59B                                                                                                                                                                                                                                             0.0s
+ => [2/5] RUN apt update && apt upgrade -y     && apt install -y php8.3-fpm apache2 libapache2-mod-fcgid     && a2enmod proxy_fcgi && a2enconf php8.3-fpm                                                                                                                  111.2s
+ => [3/5] COPY site.conf /etc/apache2/sites-available/                                                                                                                                                                                                                       0.1s
+ => [4/5] COPY index.php /var/www/hello-php-apache-from-scratch/public/                                                                                                                                                                                                      0.1s
+ => [5/5] RUN a2dissite 000-default.conf && a2ensite site.conf                                                                                                                                                                                                               1.0s
+ => exporting to image                                                                                                                                                                                                                                                      10.9s
+ => => exporting layers                                                                                                                                                                                                                                                     10.9s
+ => => writing image sha256:8d864e797428938ead203b7f199b57c33c7495b75311b24d7aff6af71d56b89b                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/hello-php-apache-from-scratch                                                                                                                                                                                                             0.0s
 
-What's Next?
-  View a summary of image vulnerabilities and recommendations → docker scout quickview
+ 1 warning found (use docker --debug to expand):
+ - JSONArgsRecommended: JSON arguments recommended for CMD to prevent unintended behavior related to OS signals (line 14)
 ```
 
-![Created image in Docker Desktop](hello-world-in-php-on-apache_-_images.png "Created image in Docker Desktop")
+```console
+$ docker images
+REPOSITORY                      TAG       IMAGE ID       CREATED          SIZE
+hello-php-apache-from-scratch   latest    8d864e797428   31 seconds ago   348MB
+```
 
 ## Creating container
 
-`docker run -d -p 8080:80 --name php-apache hello-php-and-apache-from-scratch`
+`docker run -d -p 8080:80 --name hello-world-in-php-on-apache-from-scratch hello-php-apache-from-scratch`
 
 * `run` - running new container
 * `-d` - detached mode (running in the background)
 * `-p 8080:80` - mapping port 8080 on the Docker host to TCP port 80 in the container
-* `--name php-apache` - container name
-* `hello-php` - a particular local image
+* `--name hello-world-in-php-on-apache-from-scratch` - container name
+* `hello-php-apache-from-scratch` - a particular local image
 
-```bash
-$ docker run -d -p 8080:80 --name php-apache hello-php-and-apache-from-scratch
-5107dc699faec15ee866cadc227768eb78d3e2dd98938687365c650031e4978d
+```console
+$ docker run -d -p 8080:80 --name hello-world-in-php-on-apache-from-scratch hello-php-apache-from-scratch
+99fa215c1a1360d9ff86a313d8565d38b8302512933b5a264602202d48186a23
 ```
 
-![Created container in Docker Desktop](hello-world-in-php-on-apache_-_containers.png "Created container in Docker Desktop")
+```console
+$ docker ps -a
+CONTAINER ID   IMAGE                           COMMAND                  CREATED         STATUS         PORTS                                     NAMES
+99fa215c1a13   hello-php-apache-from-scratch   "/bin/sh -c 'service…"   2 minutes ago   Up 2 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   hello-world-in-php-on-apache-from-scratch
+```
 
-![Example application in browser](hello-world-in-php-on-apache_-_browser.png "Example application in browser")
+![Example application in browser](hello-php-apache-from-scratch_-_browser.png "Example application in browser")
