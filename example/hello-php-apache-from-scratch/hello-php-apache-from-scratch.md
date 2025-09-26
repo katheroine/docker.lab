@@ -1,8 +1,10 @@
 # Example: Hello World web application in PHP on Apache from scratch
 
+## Naive approach
+
 ### Creating Dockerfile
 
-[**Dockerfile**](Dockerfile)
+[**Dockerfile**](Dockerfile-naive)
 
 ```dockerfile
 FROM ubuntu:latest
@@ -55,15 +57,17 @@ CMD service php8.3-fpm start && apachectl -D FOREGROUND
 
 ### Building image
 
-`docker build -t hello-php-apache-from-scratch .`
+`docker build -t hello-php-apache-from-scratch -f Dockerfile-naive .`
 
 * `build` - building a container
 * `-t` tags an image with a name
 * `hello-php-apache-from-scratch` - image name
-* `.` - lets Docker know where it can find the Dockerfile
+* `-f` - points out the Dockerfile
+* `Dockerfile-naive` - Dockerfile name
+* `.` - building context (with all remaining files)
 
 ```console
-$ docker build -t hello-php-apache-from-scratch .
+$ docker build -t hello-php-apache-from-scratch -f Dockerfile-naive .
 [+] Building 142.1s (11/11) FINISHED                                                                                                                                                                                                                               docker:default
  => [internal] load build definition from Dockerfile                                                                                                                                                                                                                         0.0s
  => => transferring dockerfile: 437B                                                                                                                                                                                                                                         0.0s
@@ -120,3 +124,44 @@ CONTAINER ID   IMAGE                           COMMAND                  CREATED 
 ### Remarks regarding good practices
 
 That was very simple and naive version of the Dockerfile with *shell form* of the `CMD` instruction. Better approach would use the recommended *exec form* of the `CMD` but it requires single process running, e.g. `CMD ["apachectl", "-D", "FOREGROUND"]` and Dockerfile can contain only one `CMD` instruction. One solution is to put both processes running in the script file and run it in the `CMD` instruction. One can also create two images - first for PHP-FPM, second for Apache - and use the first image as the base for the second one.
+
+## Better approach
+
+### Creating Dockerfile
+
+[**Dockerfile**](Dockerfile-better)
+
+```dockerfile
+FROM ubuntu:latest
+
+RUN apt update && apt upgrade -y \
+    && apt install -y php8.3-fpm apache2 libapache2-mod-fcgid \
+    && a2enmod proxy_fcgi && a2enconf php8.3-fpm
+
+COPY site.conf /etc/apache2/sites-available/
+COPY index.php /var/www/hello-php-apache-from-scratch/public/
+
+RUN a2dissite 000-default.conf && a2ensite site.conf
+
+EXPOSE 80
+
+COPY start-services.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/start-services.sh
+
+CMD ["/usr/local/bin/start-services.sh"]
+
+```
+
+### Preparing services script
+
+[**start-services.sh**](start-services.sh)
+
+```bash
+#!/bin/bash
+service php8.3-fpm start
+exec apachectl -D FOREGROUND
+
+```
+
+Building image and running containner are the same as in the previous version but the Dockerfile name must be changed to `Dockerfile.better`.
+(Don't forget about removing previously created container and image or use different names.)
