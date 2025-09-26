@@ -143,10 +143,10 @@ COPY index.php /var/www/hello-php-apache-from-scratch/public/
 
 RUN a2dissite 000-default.conf && a2ensite site.conf
 
-EXPOSE 80
-
 COPY start-services.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/start-services.sh
+
+EXPOSE 80
 
 CMD ["/usr/local/bin/start-services.sh"]
 
