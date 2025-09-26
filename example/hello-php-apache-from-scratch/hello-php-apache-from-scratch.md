@@ -165,3 +165,127 @@ exec apachectl -D FOREGROUND
 
 Building image and running containner are the same as in the previous version but the Dockerfile name must be changed to `Dockerfile.better`.
 (Don't forget about removing previously created container and image or use different names.)
+
+## Pro approach
+
+### Creating Dockerfiles
+
+[**PHP & Apache Dockerfile**](Dockerfile-pro-php-apache)
+
+```dockerfile
+FROM ubuntu:latest
+
+RUN apt update && apt upgrade -y \
+    && apt install -y php8.3-fpm apache2 libapache2-mod-fcgid \
+    && a2enmod proxy_fcgi && a2enconf php8.3-fpm
+
+COPY site.conf /etc/apache2/sites-available/
+
+RUN a2dissite 000-default.conf && a2ensite site.conf
+
+COPY start-services.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/start-services.sh
+
+CMD ["/usr/local/bin/start-services.sh"]
+
+```
+
+[**Application Dockerfile**](Dockerfile-pro-application)
+
+```dockerfile
+FROM hello-php-apache
+
+COPY index.php /var/www/hello-php-apache-from-scratch/public/
+
+EXPOSE 80
+
+```
+
+This Dockerfile is very similar to the one from [the previous example](../hello-php-apache/hello-php-apache.md), where [the prepared image from the Docker Hub](https://hub.docker.com/layers/library/php/8.3-apache) has been used.
+
+### Building images
+
+**PHP & Apache image**
+
+`docker build -t hello-php-apache -f Dockerfile-pro-php-apache .`
+
+* `build` - building a container
+* `-t` tags an image with a name
+* `hello-php-apache` - image name
+* `-f` - points out the Dockerfile
+* `Dockerfile-pro-php-apache` - Dockerfile name
+* `.` - building context
+
+```console
+$ docker build -t hello-php-apache -f Dockerfile-pro-php-apache .
+[+] Building 0.8s (11/11) FINISHED                                                                                                                                                                                                                                 docker:default
+ => [internal] load build definition from Dockerfile-pro-php-apache                                                                                                                                                                                                          0.0s
+ => => transferring dockerfile: 450B                                                                                                                                                                                                                                         0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                             0.5s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 51B                                                                                                                                                                                                                                             0.0s
+ => [1/6] FROM docker.io/library/ubuntu:latest@sha256:353675e2a41babd526e2b837d7ec780c2a05bca0164f7ea5dbbd433d21d166fc                                                                                                                                                       0.0s
+ => => resolve docker.io/library/ubuntu:latest@sha256:353675e2a41babd526e2b837d7ec780c2a05bca0164f7ea5dbbd433d21d166fc                                                                                                                                                       0.0s
+ => [internal] load build context                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 67B                                                                                                                                                                                                                                             0.0s
+ => CACHED [2/6] RUN apt update && apt upgrade -y     && apt install -y php8.3-fpm apache2 libapache2-mod-fcgid     && a2enmod proxy_fcgi && a2enconf php8.3-fpm                                                                                                             0.0s
+ => CACHED [3/6] COPY site.conf /etc/apache2/sites-available/                                                                                                                                                                                                                0.0s
+ => CACHED [4/6] RUN a2dissite 000-default.conf && a2ensite site.conf                                                                                                                                                                                                        0.0s
+ => CACHED [5/6] COPY start-services.sh /usr/local/bin/                                                                                                                                                                                                                      0.0s
+ => CACHED [6/6] RUN chmod +x /usr/local/bin/start-services.sh                                                                                                                                                                                                               0.0s
+ => exporting to image                                                                                                                                                                                                                                                       0.0s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:e2149e6f64b463ad73e886bba450534726ee33a63bf732866b74cf8d59f379db                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/hello-php-apache                                                                                                                                                                                                                          0.0s
+```
+
+**Application image**
+
+`docker build -t hello-php-apache-from-scratch -f Dockerfile-pro-application .`
+
+* `build` - building a container
+* `-t` tags an image with a name
+* `hello-php-apache-from-scratch` - image name
+* `-f` - points out the Dockerfile
+* `Dockerfile-pro-application` - Dockerfile name
+* `.` - building context (with all remaining files)
+
+```console
+$ docker build -t hello-php-apache-from-scratch -f Dockerfile-pro-application .
+[+] Building 0.4s (7/7) FINISHED                                                                                                                                                                                                                                   docker:default
+ => [internal] load build definition from Dockerfile-pro-application                                                                                                                                                                                                         0.0s
+ => => transferring dockerfile: 149B                                                                                                                                                                                                                                         0.0s
+ => [internal] load metadata for docker.io/library/hello-php-apache:latest                                                                                                                                                                                                   0.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 51B                                                                                                                                                                                                                                             0.0s
+ => [internal] load build context                                                                                                                                                                                                                                            0.0s
+ => => transferring context: 161B                                                                                                                                                                                                                                            0.0s
+ => [1/2] FROM docker.io/library/hello-php-apache:latest                                                                                                                                                                                                                     0.1s
+ => [2/2] COPY index.php /var/www/hello-php-apache-from-scratch/public/                                                                                                                                                                                                      0.1s
+ => exporting to image                                                                                                                                                                                                                                                       0.1s
+ => => exporting layers                                                                                                                                                                                                                                                      0.0s
+ => => writing image sha256:dd3e7aeda3a3dfeb0664c9ac5017081eb47f840017d57ff972ad456d58b6132a                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/hello-php-apache-from-scratch                                                                                                                                                                                                             0.0s
+```
+
+```console
+$ docker images
+REPOSITORY                      TAG       IMAGE ID       CREATED          SIZE
+hello-php-apache-from-scratch   latest    dd3e7aeda3a3   52 seconds ago   348MB
+hello-php-apache                latest    e2149e6f64b4   3 minutes ago    348MB
+```
+
+### Creating container
+
+`docker run -d -p 8080:80 --name hello-world-in-php-on-apache-from-scratch hello-php-apache-from-scratch`
+
+* `run` - running new container
+* `-d` - detached mode (running in the background)
+* `-p 8080:80` - mapping port 8080 on the Docker host to TCP port 80 in the container
+* `--name hello-world-in-php-on-apache-from-scratch` - container name
+* `hello-php-apache-from-scratch` - a particular local image
+
+```console
+$ docker run -d -p 8080:80 --name hello-world-in-php-on-apache-from-scratch hello-php-apache-from-scratch
+06284248166d1079c8574a19ade51f0d6d08c08ffb40d195c7f9373afa7d3389
+```
