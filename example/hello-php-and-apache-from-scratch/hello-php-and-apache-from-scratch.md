@@ -116,3 +116,5 @@ CONTAINER ID   IMAGE                           COMMAND                  CREATED 
 ```
 
 ![Example application in browser](hello-php-apache-from-scratch_-_browser.png "Example application in browser")
+
+That was very simple and naive version of the Dockerfile with *shell form* of the `CMD` instruction. Better approach would use the recommended *exec form* of the `CMD` but it requires single process running, e.g. `CMD ["apachectl", "-D", "FOREGROUND"]` and Dockerfile can contain only one `CMD` instruction. One solution is to put both processes running in the script file and run it in the `CMD` instruction. One can also create two images - first for PHP-FPM, second for Apache - and use the first image as the base for the second one.
