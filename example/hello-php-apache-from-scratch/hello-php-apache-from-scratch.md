@@ -1,6 +1,6 @@
 # Example: Hello World web application in PHP on Apache from scratch
 
-## Creating Dockerfile
+### Creating Dockerfile
 
 [**Dockerfile**](Dockerfile)
 
@@ -22,7 +22,7 @@ CMD service php8.3-fpm start && apachectl -D FOREGROUND
 
 ```
 
-## Preparing PHP application sample
+### Preparing PHP application sample
 
 [**index.php**](index.php)
 
@@ -53,7 +53,7 @@ CMD service php8.3-fpm start && apachectl -D FOREGROUND
 </VirtualHost>
 ```
 
-## Building image
+### Building image
 
 `docker build -t hello-php-apache-from-scratch .`
 
@@ -94,7 +94,7 @@ REPOSITORY                      TAG       IMAGE ID       CREATED          SIZE
 hello-php-apache-from-scratch   latest    8d864e797428   31 seconds ago   348MB
 ```
 
-## Creating container
+### Creating container
 
 `docker run -d -p 8080:80 --name hello-world-in-php-on-apache-from-scratch hello-php-apache-from-scratch`
 
@@ -117,6 +117,6 @@ CONTAINER ID   IMAGE                           COMMAND                  CREATED 
 
 ![Example application in browser](hello-php-apache-from-scratch_-_browser.png "Example application in browser")
 
-## Remarks regarding good practices
+### Remarks regarding good practices
 
 That was very simple and naive version of the Dockerfile with *shell form* of the `CMD` instruction. Better approach would use the recommended *exec form* of the `CMD` but it requires single process running, e.g. `CMD ["apachectl", "-D", "FOREGROUND"]` and Dockerfile can contain only one `CMD` instruction. One solution is to put both processes running in the script file and run it in the `CMD` instruction. One can also create two images - first for PHP-FPM, second for Apache - and use the first image as the base for the second one.

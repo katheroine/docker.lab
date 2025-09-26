@@ -1,6 +1,6 @@
 # Example: Hello World web application in PHP on Apache from prepared image
 
-## Creating Dockerfile
+### Creating Dockerfile
 
 [**Dockerfile**](Dockerfile)
 
@@ -16,7 +16,7 @@ EXPOSE 80
 
 ```
 
-## Creating PHP application sample
+### Creating PHP application sample
 
 [**index.php**](index.php)
 
@@ -26,7 +26,7 @@ EXPOSE 80
 
 ```
 
-## Building image
+### Building image
 
 `docker build -t hello-php-apache .`
 
@@ -94,7 +94,7 @@ REPOSITORY         TAG       IMAGE ID       CREATED          SIZE
 hello-php-apache   latest    5dccd00ae7d4   20 minutes ago   503MB
 ```
 
-## Creating container
+### Creating container
 
 `docker run -d -p 8080:80 --name hello-world-in-php-on-apache hello-php-apache`
 
@@ -117,7 +117,7 @@ c47c43dea513   hello-php-apache   "docker-php-entrypoi…"   About an hour ago  
 
 ![Example application in browser](hello-php-apache_-_browser.png "Example application in browser")
 
-## Tagging image
+### Tagging image
 
 `docker tag hello-php-apache:latest katheroine/hello-php-apache:latest`
 
@@ -136,7 +136,7 @@ katheroine/hello-php-apache   latest    5dccd00ae7d4   2 hours ago   503MB
 hello-php-apache              latest    5dccd00ae7d4   2 hours ago   503MB
 ```
 
-## Publishing image
+### Publishing image
 
 `docker push katheroine/hello-php-apache:latest`
 
