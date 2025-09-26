@@ -1,4 +1,4 @@
-# Example: Hello World web application in PHP on Apache
+# Example: Hello World web application in PHP on Apache from prepared image
 
 ## Creating Dockerfile
 
