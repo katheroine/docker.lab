@@ -17,8 +17,8 @@ Laboratory of Docker.
     3. [Instructions](doc/dockerfile_instructions.md)
 5. Examples
     1. Hello World in PHP on Apache
-        1. [Hello World in PHP on Apache from prepared image](example/hello-php-apache/hello-php-apache.md)
+        1. [Hello World in PHP on Apache from pre-made image](example/hello-php-apache-from-premade-image/hello-php-apache-from-premade-image.md)
         2. [Hello World in PHP on Apache from scratch](example/hello-php-apache-from-scratch/hello-php-apache-from-scratch.md)
     2. Hello World in PHP on Apache with MySQL
-        1. [Two containers & network](example/hello-php-and-mysql/network/hello-php-and-mysql.md)
-        2. [Multicontainer](example/hello-php-and-mysql/compose/hello-php-and-mysql.md)
+        1. [Two containers & network](example/hello-php-apache-mysql-from-scratch/network/hello-php-and-mysql.md)
+        2. [Multicontainer](example/hello-php-apache-mysql-from-scratch/compose/hello-php-and-mysql.md)
