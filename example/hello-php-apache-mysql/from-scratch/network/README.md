@@ -90,7 +90,7 @@ What's Next?
   View a summary of image vulnerabilities and recommendations → docker scout quickview
 ```
 
-![Created image in Docker Desktop](hello-world-in-mysql_-_images.png "Created image in Docker Desktop")
+![Created image in Docker Desktop](images_-_mysql.png "Created image in Docker Desktop")
 
 ### Creating container
 
@@ -111,7 +111,7 @@ $ docker run -d -p 3307:3306 --name mysql --network php-apache-and-mysql hello-m
 
 `docker exec -it mysl /bin/bash`
 
-![Created container in Docker Desktop](hello-world-in-mysql_-_containers.png "Created container in Docker Desktop")
+![Created container in Docker Desktop](containers_-_mysql.png "Created container in Docker Desktop")
 
 ## Creating PHP & Apache image & container
 
@@ -217,7 +217,7 @@ What's Next?
   View a summary of image vulnerabilities and recommendations → docker scout quickview
 ```
 
-![Created images in Docker Desktop](hello-world-in-php-on-apache-with-mysql_-_images.png "Created images in Docker Desktop")
+![Created images in Docker Desktop](images_-_mysql-php-apache.png "Created images in Docker Desktop")
 
 ### Creating container
 
@@ -234,10 +234,10 @@ $ docker run -d -p 8080:80 --name php-apache --network php-apache-and-mysql hell
 787c26fdb0e082a7d30e4763c5cff251d7e74ddb3b2292cc2d3b0d3f83ad3754
 ```
 
-![Created containers in Docker Desktop](hello-world-in-php-on-apache-with-mysql_-_containers.png "Created containers in Docker Desktop")
+![Created containers in Docker Desktop](containers_-_mysql-php-apache.png "Created containers in Docker Desktop")
 
 ## Logging into container
 
 `docker exec -it php-apache /bin/bash`
 
-![Example application in browser](hello-world-in-php-on-apache-with-mysql_-_browser.png "Example application in browser")
+![Example application in browser](browser.png "Example application in browser")

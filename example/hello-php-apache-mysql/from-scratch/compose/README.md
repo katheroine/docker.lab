@@ -194,8 +194,8 @@ $ docker compose up -d
  ✔ Container php-apache-partial      Started
 ```
 
-![Created images in Docker Desktop](hello-world-in-php-on-apache-with-mysql_-_images.png "Created images in Docker Desktop")
+![Created images in Docker Desktop](images.png "Created images in Docker Desktop")
 
-![Created multi-container in Docker Desktop](hello-world-in-php-on-apache-with-mysql_-_containers.png "Created multi-container in Docker Desktop")
+![Created multi-container in Docker Desktop](containers.png "Created multi-container in Docker Desktop")
 
-![Example application in browser](hello-world-in-php-on-apache-with-mysql_-_browser.png "Example application in browser")
+![Example application in browser](browser.png "Example application in browser")

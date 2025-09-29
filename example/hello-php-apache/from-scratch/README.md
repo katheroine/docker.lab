@@ -119,7 +119,7 @@ CONTAINER ID   IMAGE                           COMMAND                  CREATED 
 99fa215c1a13   hello-php-apache-from-scratch   "/bin/sh -c 'service…"   2 minutes ago   Up 2 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   hello-world-in-php-on-apache-from-scratch
 ```
 
-![Example application in browser](hello-php-apache-from-scratch_-_browser.png "Example application in browser")
+![Example application in browser](browser.png "Example application in browser")
 
 ### Remarks regarding good practices
 

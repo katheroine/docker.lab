@@ -115,7 +115,7 @@ CONTAINER ID   IMAGE              COMMAND                  CREATED             S
 c47c43dea513   hello-php-apache   "docker-php-entrypoi…"   About an hour ago   Up About an hour   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   hello-world-in-php-on-apache
 ```
 
-![Example application in browser](hello-php-apache-from-premade-image_-_browser.png "Example application in browser")
+![Example application in browser](browser.png "Example application in browser")
 
 ### Tagging image
 
@@ -167,4 +167,4 @@ daf557c4f08e: Pushed
 latest: digest: sha256:02d731153ed826a614e2e68670b755dcfd860d0761da60d2e6096606fda1d66a size: 3655
 ```
 
-![Published image on Docker Hub](hello-php-apache-from-premade-image_-_dockerhub.png "Published image on Docker Hub")
+![Published image on Docker Hub](dockerhub.png "Published image on Docker Hub")
