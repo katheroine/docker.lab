@@ -1,17 +1,17 @@
-name: php-apache-mysql
+name: hello-world-in-php-on-apache-with-mysql-from-scratch
 
 services:
 
   php-apache:
-    container_name: php-apache-partial
+    container_name: hello-world-in-php-on-apache-from-scratch
     build:
-      context: ./php-apache
+      context: hello-php-apache/
     ports:
       - "8080:80"
 
   mysql:
-    container_name: mysql-partial
+    container_name: hello-world-with-mysql-from-scratch
     build:
-      context: ./mysql
+      context: hello-mysql/
     ports:
       - "3307:3306"

@@ -1,33 +1,34 @@
-# Example application: Hello World in PHP on Apache with MySQL from scratch - multi-container
+# Example: Hello World web application in PHP on Apache with MySQL from scratch
 
-## Configuring MySQL image
+## Multi-container
 
-### Creating Dockerfile
+### Configuring MySQL image
 
-**Dockerfile**
+#### Creating Dockerfile
+
+[**Dockerfile**](hello-mysql/Dockerfile)
 
 ```dockerfile
-FROM ubuntu:23.10
+FROM ubuntu:latest
 
-RUN apt -y update
-RUN apt -y upgrade
-RUN apt -y install mysql-server-8.0
+RUN apt update && apt upgrade -y \
+    && apt install -y mysql-server-8.0
 
 RUN sed -i "s|bind-address		= 127.0.0.1|#bind-address		= 127.0.0.1 |g" /etc/mysql/mysql.conf.d/mysqld.cnf
 
 COPY database.sql /var/tmp/
-RUN service mysql start && \
-    echo "source /var/tmp/database.sql" | mysql
+RUN service mysql start \
+    && echo "source /var/tmp/database.sql" | mysql
 
 EXPOSE 3306
 
-CMD mysqld_safe
+CMD ["mysqld_safe"]
 
 ```
 
-### Preparing SQL script
+#### Preparing SQL script
 
-**database.sql**
+[**database.sql**](hello-mysql/database.sql)
 
 ```sql
 CREATE DATABASE hello;
@@ -50,94 +51,122 @@ VALUES
 
 ```
 
-## Configuring PHP & Apache image
+### Configuring PHP & Apache image
 
-### Creating Dockerfile
+#### Creating Dockerfile
 
-**Dockerfile**
+[**Dockerfile**](hello-php-apache/Dockerfile)
 
 ```dockerfile
-FROM ubuntu:23.10
+FROM ubuntu:latest
 
-RUN apt -y update
-RUN apt -y upgrade
-RUN apt -y install php8.2-fpm
-RUN apt -y install apache2
-RUN apt -y install libapache2-mod-fcgid
-RUN apt -y install php8.2-mysql
+RUN apt update && apt upgrade -y \
+    && apt install -y php8.3-fpm apache2 libapache2-mod-fcgid php8.3-mysql \
+    && a2enmod proxy_fcgi && a2enconf php8.3-fpm
 
-RUN a2enmod proxy_fcgi
-RUN a2enconf php8.2-fpm
-
-RUN mkdir -p /var/www/hello-php-and-apache/public
-RUN chmod -R 755 /var/www
 COPY site.conf /etc/apache2/sites-available/
-COPY index.php /var/www/hello-php-and-apache/public
+COPY index.php /var/www/hello-php-apache-from-scratch/public/
 
-RUN a2dissite 000-default.conf
-RUN a2ensite site.conf
+RUN a2dissite 000-default.conf && a2ensite site.conf
 
-EXPOSE 80
+COPY start-services.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/start-services.sh
 
-CMD service php8.2-fpm start; apachectl -D FOREGROUND
+CMD ["/usr/local/bin/start-services.sh"]
 
 ```
 
-### Preparing PHP application sample
+#### Preparing services script
 
-**index.php**
+[**start-services.sh**](hello-php-apache/start-services.sh)
+
+```bash
+#!/bin/bash
+service php8.3-fpm start
+exec apachectl -D FOREGROUND
+
+```
+
+#### Preparing PHP application sample
+
+[**index.php**](hello-php-apache/index.php)
 
 ```php
 <h1>Hello, world!!!</h1>
 <p>This is Docker example application in PHP <?php echo phpversion(); ?> on Apache.</p>
 
 <?php
-$connection = new mysqli('mysql', 'hello', 'hello', 'hello');
-if ($connection->connect_error) {
-  die('Database connection failed: ' . $connection->connect_error);
+try {
+    $connection = new mysqli('hello-world-with-mysql-from-scratch', 'hello', 'hello', 'hello');
+    if ($connection->connect_error) {
+      die('Database connection failed: ' . $connection->connect_error);
+    }
+    echo('<h3>Top popular fruits</h3>');
+    $result = $connection->query('SELECT * FROM fruits');
+    if ($result->num_rows > 0) {
+      while($row = $result->fetch_assoc()) {
+        echo('<div>id: ' . $row['id']. ' - name: ' . $row['name']. ', color ' . $row['color']. '</div>');
+      }
+    } else {
+      echo("<p>No items in the database.</p>");
+    }
+    $connection->close();
+} catch (\Exception $error) {
+    var_dump($error);
 }
-echo('<h3>Top popular fruits</h3>');
-$result = $connection->query('SELECT * FROM fruits');
-if ($result->num_rows > 0) {
-  while($row = $result->fetch_assoc()) {
-    echo('<div>id: ' . $row['id']. ' - name: ' . $row['name']. ', color ' . $row['color']. '</div>');
-  }
-} else {
-  echo("<p>No items in the database.</p>");
-}
-$connection->close();
 ?>
 
 ```
 
-## Creating multicontainer
+[**site.conf**](hello-php-apache/site.conf)
 
-### Preparing compose.yaml
+```apache
+<VirtualHost *:80>
+    ServerName hello-php-apache-from-scratch.local
+    DocumentRoot /var/www/hello-php-apache-from-scratch/public
 
-**compose.yaml**
+    <Directory "/var/www/hello-php-apache-from-scratch/public">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
 
-```dockerfile
-name: php-apache-mysql
+    <FilesMatch \.php$>
+        <If "-f %{REQUEST_FILENAME}">
+            SetHandler "proxy:unix:/var/run/php/php8.3-fpm.sock|fcgi://localhost"
+        </If>
+    </FilesMatch>
+</VirtualHost>
+```
+
+### Creating multicontainer
+
+#### Preparing compose.yaml
+
+[**compose.yaml**](compose.yaml)
+
+```yaml
+name: hello-world-in-php-on-apache-with-mysql-from-scratch
 
 services:
 
   php-apache:
-    container_name: php-apache-partial
+    container_name: hello-world-in-php-on-apache-from-scratch
     build:
-      context: ./php-apache
+      context: hello-php-apache/
     ports:
       - "8080:80"
 
   mysql:
-    container_name: mysql-partial
+    container_name: hello-world-with-mysql-from-scratch
     build:
-      context: ./mysql
+      context: hello-mysql/
     ports:
       - "3307:3306"
 
 ```
 
-### Running multi-container
+#### Running multi-container
 
 `docker compose up -d`
 
@@ -147,55 +176,81 @@ services:
 
 ```bash
 $ docker compose up -d
-[+] Building 2.1s (28/28) FINISHED                                                                                                                                                                                                                           docker:desktop-linux
- => [php-apache internal] load .dockerignore                                                                                                                                                                                                                                 0.1s
- => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
+Compose can now delegate builds to bake for better performance.
+ To do so, set COMPOSE_BAKE=true.
+[+] Building 190.0s (23/23) FINISHED                                                                                                                                                                                                                               docker:default
  => [php-apache internal] load build definition from Dockerfile                                                                                                                                                                                                              0.0s
- => => transferring dockerfile: 567B                                                                                                                                                                                                                                         0.0s
+ => => transferring dockerfile: 510B                                                                                                                                                                                                                                         0.0s
+ => [mysql internal] load build definition from Dockerfile                                                                                                                                                                                                                   0.0s
+ => => transferring dockerfile: 380B                                                                                                                                                                                                                                         0.0s
+ => [mysql internal] load metadata for docker.io/library/ubuntu:latest                                                                                                                                                                                                       2.2s
+ => [php-apache auth] library/ubuntu:pull token for registry-1.docker.io                                                                                                                                                                                                     0.0s
+ => [php-apache internal] load .dockerignore                                                                                                                                                                                                                                 0.0s
+ => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
  => [mysql internal] load .dockerignore                                                                                                                                                                                                                                      0.0s
  => => transferring context: 2B                                                                                                                                                                                                                                              0.0s
- => [mysql internal] load build definition from Dockerfile                                                                                                                                                                                                                   0.1s
- => => transferring dockerfile: 374B                                                                                                                                                                                                                                         0.0s
- => [php-apache internal] load metadata for docker.io/library/ubuntu:23.10                                                                                                                                                                                                   1.4s
- => [php-apache  1/15] FROM docker.io/library/ubuntu:23.10@sha256:5cd569b792a8b7b483d90942381cd7e0b03f0a15520d6e23fb7a1464a25a71b1                                                                                                                                           0.0s
- => [mysql internal] load build context                                                                                                                                                                                                                                      0.1s
+ => [mysql 1/5] FROM docker.io/library/ubuntu:latest@sha256:fdb6c9ceb1293dcb0b7eda5df195b15303b01857d7b10f98489e7691d20aa2a1                                                                                                                                                 7.7s
+ => => resolve docker.io/library/ubuntu:latest@sha256:fdb6c9ceb1293dcb0b7eda5df195b15303b01857d7b10f98489e7691d20aa2a1                                                                                                                                                       0.0s
+ => => sha256:78281ac7684a7caf02348780a1b5de85844548a3cc0505df924de98380a0eeea 424B / 424B                                                                                                                                                                                   0.0s
+ => => sha256:ce8f79aecc435fc0b22d4dd58c72836e330beddf204491eef3f91af51bc48ed7 2.30kB / 2.30kB                                                                                                                                                                               0.0s
+ => => sha256:a1a21c96bc16121569dd937bcd1c745a5081629b3b08a664446602ded91e10a4 29.72MB / 29.72MB                                                                                                                                                                             3.6s
+ => => sha256:fdb6c9ceb1293dcb0b7eda5df195b15303b01857d7b10f98489e7691d20aa2a1 6.69kB / 6.69kB                                                                                                                                                                               0.0s
+ => => extracting sha256:a1a21c96bc16121569dd937bcd1c745a5081629b3b08a664446602ded91e10a4                                                                                                                                                                                    3.6s
+ => [php-apache internal] load build context                                                                                                                                                                                                                                 0.0s
+ => => transferring context: 1.47kB                                                                                                                                                                                                                                          0.0s
+ => [mysql internal] load build context                                                                                                                                                                                                                                      0.0s
  => => transferring context: 34B                                                                                                                                                                                                                                             0.0s
- => [php-apache internal] load build context                                                                                                                                                                                                                                 0.1s
- => => transferring context: 60B                                                                                                                                                                                                                                             0.0s
- => CACHED [php-apache  2/15] RUN apt -y update                                                                                                                                                                                                                              0.0s
- => CACHED [php-apache  3/15] RUN apt -y upgrade                                                                                                                                                                                                                             0.0s
- => CACHED [mysql 4/7] RUN apt -y install mysql-server-8.0                                                                                                                                                                                                                   0.0s
- => CACHED [mysql 5/7] RUN sed -i "s|bind-address  = 127.0.0.1|#bind-address  = 127.0.0.1 |g" /etc/mysql/mysql.conf.d/mysqld.cnf                                                                                                                                             0.0s
- => CACHED [mysql 6/7] COPY database.sql /var/tmp/                                                                                                                                                                                                                           0.0s
- => CACHED [mysql 7/7] RUN service mysql start &&     echo "source /var/tmp/database.sql" | mysql                                                                                                                                                                            0.0s
- => [mysql] exporting to image                                                                                                                                                                                                                                               0.1s
- => => exporting layers                                                                                                                                                                                                                                                      0.0s
- => => writing image sha256:075f2c01e5394a4f1c2a88658807b7acf96237e6c40b542363ed571a82165f61                                                                                                                                                                                 0.0s
- => => naming to docker.io/library/php-apache-mysql-mysql                                                                                                                                                                                                                    0.0s
- => CACHED [php-apache  4/15] RUN apt -y install php8.2-fpm                                                                                                                                                                                                                  0.0s
- => CACHED [php-apache  5/15] RUN apt -y install apache2                                                                                                                                                                                                                     0.0s
- => CACHED [php-apache  6/15] RUN apt -y install libapache2-mod-fcgid                                                                                                                                                                                                        0.0s
- => CACHED [php-apache  7/15] RUN apt -y install php8.2-mysql                                                                                                                                                                                                                0.0s
- => CACHED [php-apache  8/15] RUN a2enmod proxy_fcgi                                                                                                                                                                                                                         0.0s
- => CACHED [php-apache  9/15] RUN a2enconf php8.2-fpm                                                                                                                                                                                                                        0.0s
- => CACHED [php-apache 10/15] RUN mkdir -p /var/www/hello-php-and-apache/public                                                                                                                                                                                              0.0s
- => CACHED [php-apache 11/15] RUN chmod -R 755 /var/www                                                                                                                                                                                                                      0.0s
- => CACHED [php-apache 12/15] COPY site.conf /etc/apache2/sites-available/                                                                                                                                                                                                   0.0s
- => CACHED [php-apache 13/15] COPY index.php /var/www/hello-php-and-apache/public                                                                                                                                                                                            0.0s
- => CACHED [php-apache 14/15] RUN a2dissite 000-default.conf                                                                                                                                                                                                                 0.0s
- => CACHED [php-apache 15/15] RUN a2ensite site.conf                                                                                                                                                                                                                         0.0s
- => [php-apache] exporting to image                                                                                                                                                                                                                                          0.1s
- => => exporting layers                                                                                                                                                                                                                                                      0.0s
- => => writing image sha256:9a6fae75f646b3b7077839493c749642649da9c6d96205f0084133aab9e89456                                                                                                                                                                                 0.0s
- => => naming to docker.io/library/php-apache-mysql-php-apache                                                                                                                                                                                                               0.0s
-[+] Running 3/3
- ✔ Network php-apache-mysql_default  Created                                                                                                                                                                                                                                 0.1s
- ✔ Container mysql-partial           Started                                                                                                                                                                                                                                 0.2s
- ✔ Container php-apache-partial      Started
+ => [mysql 2/5] RUN apt update && apt upgrade -y     && apt install -y mysql-server-8.0                                                                                                                                                                                    124.4s
+ => [php-apache 2/7] RUN apt update && apt upgrade -y     && apt install -y php8.3-fpm apache2 libapache2-mod-fcgid php8.3-mysql     && a2enmod proxy_fcgi && a2enconf php8.3-fpm                                                                                          169.6s
+ => [mysql 3/5] RUN sed -i "s|bind-address  = 127.0.0.1|#bind-address  = 127.0.0.1 |g" /etc/mysql/mysql.conf.d/mysqld.cnf                                                                                                                                                    1.0s
+ => [mysql 4/5] COPY database.sql /var/tmp/                                                                                                                                                                                                                                  0.2s
+ => [mysql 5/5] RUN service mysql start     && echo "source /var/tmp/database.sql" | mysql                                                                                                                                                                                   6.0s
+ => [mysql] exporting to image                                                                                                                                                                                                                                              20.2s
+ => => exporting layers                                                                                                                                                                                                                                                     20.2s
+ => => writing image sha256:36c3357e4eead9855bfa7f4f77d7b6477fb1bb6f2684bf95986c57e35275a785                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/hello-world-in-php-on-apache-with-mysql-from-scratch-mysql                                                                                                                                                                                0.0s
+ => [mysql] resolving provenance for metadata file                                                                                                                                                                                                                           0.1s
+ => [php-apache 3/7] COPY site.conf /etc/apache2/sites-available/                                                                                                                                                                                                            0.2s
+ => [php-apache 4/7] COPY index.php /var/www/hello-php-apache-from-scratch/public/                                                                                                                                                                                           0.1s
+ => [php-apache 5/7] RUN a2dissite 000-default.conf && a2ensite site.conf                                                                                                                                                                                                    1.0s
+ => [php-apache 6/7] COPY start-services.sh /usr/local/bin/                                                                                                                                                                                                                  0.2s
+ => [php-apache 7/7] RUN chmod +x /usr/local/bin/start-services.sh                                                                                                                                                                                                           0.7s
+ => [php-apache] exporting to image                                                                                                                                                                                                                                          8.0s
+ => => exporting layers                                                                                                                                                                                                                                                      8.0s
+ => => writing image sha256:ea4895943d800655e21b6789ad8840eb2535c22f5d019d6b3c689966117bf12f                                                                                                                                                                                 0.0s
+ => => naming to docker.io/library/hello-world-in-php-on-apache-with-mysql-from-scratch-php-apache                                                                                                                                                                           0.0s
+ => [php-apache] resolving provenance for metadata file                                                                                                                                                                                                                      0.0s
+[+] Running 5/5
+ ✔ mysql                                                                 Built                                                                                                                                                                                               0.0s
+ ✔ php-apache                                                            Built                                                                                                                                                                                               0.0s
+ ✔ Network hello-world-in-php-on-apache-with-mysql-from-scratch_default  Created                                                                                                                                                                                             0.2s
+ ✔ Container hello-world-in-php-on-apache-from-scratch                   Started                                                                                                                                                                                             1.4s
+ ✔ Container hello-world-with-mysql-from-scratch                         Started                                                                                                                                                                                             1.3s
 ```
 
-![Created images in Docker Desktop](images.png "Created images in Docker Desktop")
+```console
+$ docker network ls
+NETWORK ID     NAME                                                           DRIVER    SCOPE
+c294fa0eb3b6   bridge                                                         bridge    local
+5876f77e76b5   hello-world-in-php-on-apache-with-mysql-from-scratch_default   bridge    local
+e7d6d7973119   host                                                           host      local
+f3babe8fdced   none                                                           null      local
+```
 
-![Created multi-container in Docker Desktop](containers.png "Created multi-container in Docker Desktop")
+```console
+$ docker image ls
+REPOSITORY                                                        TAG       IMAGE ID       CREATED         SIZE
+hello-world-in-php-on-apache-with-mysql-from-scratch-php-apache   latest    ea4895943d80   3 minutes ago   338MB
+hello-world-in-php-on-apache-with-mysql-from-scratch-mysql        latest    36c3357e4eea   4 minutes ago   952MB
+```
+
+```console
+$ docker container ls -a
+CONTAINER ID   IMAGE                                                             COMMAND                  CREATED         STATUS         PORTS                                         NAMES
+21e2cbf840c3   hello-world-in-php-on-apache-with-mysql-from-scratch-php-apache   "/usr/local/bin/star…"   3 minutes ago   Up 3 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp       hello-world-in-php-on-apache-from-scratch
+7fd32cbc8acb   hello-world-in-php-on-apache-with-mysql-from-scratch-mysql        "mysqld_safe"            3 minutes ago   Up 3 minutes   0.0.0.0:3307->3306/tcp, [::]:3307->3306/tcp   hello-world-with-mysql-from-scratch
+```
+
+### Watching results
 
 ![Example application in browser](browser.png "Example application in browser")
